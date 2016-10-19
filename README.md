@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/usgs/ps2ff.svg?branch=master)](https://travis-ci.org/usgs/ps2ff)
+
+
 # ps2ff
 Produce approximated finite fault distances and variance corrections given point source 
 information (e.g., Repi (epcentral distance) to Rjb (Joyner-Boore distance) or Rrup 
