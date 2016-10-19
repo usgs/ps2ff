@@ -23,6 +23,7 @@ source activate $VENV
 #install some items separately
 #conda install -y sqlalchemy #at the time of this writing, this is v1.0, and I want v1.1
 conda install -y psutil
+pip install https://github.com/usgs/earthquake-impact-utils/archive/master.zip
 
 #tell the user they have to activate this environment
 echo "Type 'source activate ${VENV}' to use this new virtual environment."
