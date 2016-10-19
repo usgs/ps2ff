@@ -1,0 +1,12 @@
+# Program: progs/RjbMeanVar.py
+# Config file: tests/config/test_Rjb_S14.ini
+# Process start: 2016-10-19T15:20:51.733910
+# Process finish: 2016-10-19T15:20:51.883161
+# rup_dim_model = S14, mech = A, LW = False, AR = 1.7, ndip = 2, mindip = 0.000000, maxdip = 1.570796, ntheta = 2, nxny = 2
+# neps = 2, trunc = 0.500000, min_seis_depth = 0.000000, max_seis_depth = 20.000000
+"Repi_km","V6.5","V7","V7.5"
+0.100000,0.001875,0.001875,0.001875
+0.562341,0.059293,0.059293,0.059293
+3.162278,1.875000,1.875000,1.875000
+17.782794,19.955436,55.758151,59.292706
+100.000000,19.955436,63.104629,199.554357
