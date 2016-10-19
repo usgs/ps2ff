@@ -1,8 +1,8 @@
-# Program: progs/RjbMeanVar.py
+# Program: progs/RrupMeanVar.py
 # Config file: tests/config/fast_rrup_WC94_R_T.ini
-# Process start: 2016-10-19T15:09:13.442647
-# Process finish: 2016-10-19T15:09:13.535607
-# rup_dim_model = WC94, mech = R, LW = True, AR = 1.0, ndip = 1, mindip = 0.000000, maxdip = 1.570796, ntheta = 2, nxny = 2
+# Process start: 2016-10-19T16:20:51.486903
+# Process finish: 2016-10-19T16:20:51.600055
+# rup_dim_model = WC94, mech = R, LW = True, AR = 1.0, ndip = 1, mindip = 0.000000, maxdip = 1.570796, ntheta = 2, nxny = 2, nz = 1
 # neps = 1, trunc = 0.500000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
 "Repi_km","R6.5"
 10.000000,0.500000
