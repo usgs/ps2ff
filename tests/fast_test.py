@@ -6,7 +6,7 @@ from impactutils.io.cmd import get_command_output
 
 def test_rrup_WC94_SS_F():
     conf = 'fast_rrup_WC94_SS_F.ini'
-    cmd = "progs/RjbMeanVar.py tests/config/%s" %conf
+    cmd = "progs/RrupMeanVar.py tests/config/%s" %conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechSS_ar1p0_seis0_15_Ratios.csv", header = 6)
     v1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechSS_ar1p0_seis0_15_Var.csv", header = 6)
@@ -37,7 +37,7 @@ def test_rjb_WC94_SS_F():
 
 def test_rrup_WC94_SS_T():
     conf = 'fast_rrup_WC94_SS_T.ini'
-    cmd = "progs/RjbMeanVar.py tests/config/%s" %conf
+    cmd = "progs/RrupMeanVar.py tests/config/%s" %conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechSS_LW_seis0_15_Ratios.csv", header = 6)
     v1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechSS_LW_seis0_15_Var.csv", header = 6)
@@ -68,7 +68,7 @@ def test_rjb_WC94_SS_T():
 
 def test_rrup_WC94_R_T():
     conf = 'fast_rrup_WC94_R_T.ini'
-    cmd = "progs/RjbMeanVar.py tests/config/%s" %conf
+    cmd = "progs/RrupMeanVar.py tests/config/%s" %conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechR_LW_seis0_15_Ratios.csv", header = 6)
     v1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechR_LW_seis0_15_Var.csv", header = 6)
@@ -99,7 +99,7 @@ def test_rjb_WC94_R_T():
 
 def test_rrup_WC94_R_F():
     conf = 'fast_rrup_WC94_R_F.ini'
-    cmd = "progs/RjbMeanVar.py tests/config/%s" %conf
+    cmd = "progs/RrupMeanVar.py tests/config/%s" %conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechR_ar1p0_seis0_15_Ratios.csv", header = 6)
     v1 = pd.DataFrame.from_csv("tests/data/test_Rrup_WC94_mechR_ar1p0_seis0_15_Var.csv", header = 6)
