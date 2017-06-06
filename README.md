@@ -44,7 +44,7 @@ The parameters are:
 
  - **filebase** - The base name of the output file (see output file naming convention below).
 
- - **datadir** - The directory into which the output files are written.
+ - **datadir** - The directory into which the output files are written. If unspecified, it uses "./data".
 
  - **rup_dim_model** - If 'WC94' use Wells and Coppersmith (1994) model, otherwise use Somerville
 (2014).

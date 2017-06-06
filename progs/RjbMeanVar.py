@@ -348,7 +348,10 @@ def main():
 
     NP = Config.getint(section, 'NP')
     filebase = Config.get(section, 'filebase')
-    datadir = Config.get(section, 'datadir')
+    try:
+        datadir = Config.get(section, 'datadir')
+    except:
+        datadir = 'data'
     rup_dim_model = Config.get(section, 'rup_dim_model')
     mech = Config.get(section, 'mech')
     LW = Config.getboolean(section, 'LW')
