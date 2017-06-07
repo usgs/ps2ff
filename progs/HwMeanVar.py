@@ -407,8 +407,8 @@ def main():
         pid, status = os.waitpid(-1, 0)
 
 
-    fr = open('%s_Ratios.csv' % (filename), 'w')
-    fv = open('%s_Var.csv' % (filename), 'w')
+    fr = open('%s_ProbHw.csv' % (filename), 'w')
+    fv = open('%s_HwVar.csv' % (filename), 'w')
 
     fr.write('# Program: %s\n' % sys.argv[0])
     fv.write('# Program: %s\n' % sys.argv[0])
@@ -447,8 +447,8 @@ def main():
     frs = [None] * NP
     fvs = [None] * NP
     for iP in range(0, NP):
-        rat_file[iP] = '%sRatios_%02d.csv' % (filename, iP)
-        var_file[iP] = '%sVar_%02d.csv' % (filename, iP)
+        rat_file[iP] = '%sProbHw_%02d.csv' % (filename, iP)
+        var_file[iP] = '%sHwVar_%02d.csv' % (filename, iP)
         frs[iP] = open(rat_file[iP], 'r')
         fvs[iP] = open(var_file[iP], 'r')
 
