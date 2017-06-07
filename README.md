@@ -33,7 +33,7 @@ To run the programs, do:
 Program Details
 ---------------
 
-*RjbMeanVar.py, HwMeanVar.py,* 
+*RjbMeanVar.py, HwMeanVar.py* 
 
 RjbMeanVar.py produces tables of Repi-to-Rjb ratios and variances, and HwMeanVar.py
 produces tables of the probability of a site being on the hangingwall and the variance
