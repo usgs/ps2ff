@@ -35,7 +35,7 @@ def HwMeanVar_MR(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
         nepi = np.size(Repi)
 
     nmag = np.size(M)
-    pwh = np.zeros((nepi, nmag))
+    phw = np.zeros((nepi, nmag))
     variance = np.zeros((nepi, nmag))
     for i in range(0, nepi):
         for j in range(0, nmag):
