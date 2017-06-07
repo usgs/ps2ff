@@ -35,7 +35,7 @@ def HwMeanVar_MR(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
         nepi = np.size(Repi)
 
     nmag = np.size(M)
-    ratio = np.zeros((nepi, nmag))
+    pwh = np.zeros((nepi, nmag))
     variance = np.zeros((nepi, nmag))
     for i in range(0, nepi):
         for j in range(0, nmag):
@@ -47,21 +47,21 @@ def HwMeanVar_MR(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                                                    LW=LW, AR=AR,
                                                    ntheta=ntheta, nxny=nxny,
                                                    neps=neps, trunc=trunc)
-            ratio[i,j] = hwi_avg / Repi[i]
+            phw[i,j] = hwi_avg
             variance[i,j] = hwi_var
             print("        Proc %d j=%d of %d %s" % (iP, j+1, nmag,
                   datetime.datetime.now().isoformat()))
         print("Proc %d done with %d of %d distances %s" % (iP, i+1, nepi,
               datetime.datetime.now().isoformat()))
 
-    fr = open('%sRatios_%02d.csv' % (filename, iP), 'w')
-    fv = open('%sVar_%02d.csv' % (filename, iP), 'w')
+    fr = open('%sProbHw_%02d.csv' % (filename, iP), 'w')
+    fv = open('%sHwVar_%02d.csv' % (filename, iP), 'w')
 
     for i in range(0, nepi):
         fr.write("%f," % Repi[i])
         fv.write("%f," % Repi[i])
         for j in range(0, nmag):
-            fr.write("%f" % ratio[i,j])
+            fr.write("%f" % phw[i,j])
             fv.write("%f" % variance[i,j])
             if j < nmag - 1:
                 fr.write(",")
