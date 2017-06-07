@@ -33,9 +33,13 @@ To run the programs, do:
 Program Details
 ---------------
 
-*RjbMeanVar.py* 
+*RjbMeanVar.py, HwMeanVar.py,* 
 
-Produces tables of Repi-to-Rjb ratios and variances. Example config
+RjbMeanVar.py produces tables of Repi-to-Rjb ratios and variances, and HwMeanVar.py
+produces tables of the probability of a site being on the hangingwall and the variance
+of the probability. These two programs are grouped together because they have identical
+inputs. 
+Example config
 file "test_Rjb.ini". 
 
 The parameters are:
@@ -61,7 +65,7 @@ length will increase.
 
  - **min_seis_depth** - The minimum seismogenic depth (km, integer).
 
- - **max_seis_depth* - The maximum seismogenic depth (km, integer).
+ - **max_seis_depth** - The maximum seismogenic depth (km, integer).
 
  - **mindip_deg** - The minimum rupture dip in degrees (0 min, 90 max, integer).
 
