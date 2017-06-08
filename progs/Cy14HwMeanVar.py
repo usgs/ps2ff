@@ -52,15 +52,15 @@ def MeanVar_MR(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                                            LW=LW, AR=AR,
                                            ntheta=ntheta, nxny=nxny, nz=nz,
                                            neps=neps, trunc=trunc)
-            ratio[i,j] = avg / Repi[i]
+            ratio[i,j] = avg
             variance[i,j] = var
             print("        Proc %d j=%d of %d %s" % (iP, j+1, nmag,
                 datetime.datetime.now().isoformat()))
         print("Proc %d done with %d of %d distances %s" % (iP, i+1, nepi,
             datetime.datetime.now().isoformat()))
 
-    fr = open('%sRatios_%02d.csv' % (filename, iP), 'w')
-    fv = open('%sVar_%02d.csv' % (filename, iP), 'w')
+    fr = open('%sHw_%02d.csv' % (filename, iP), 'w')
+    fv = open('%sHwVar_%02d.csv' % (filename, iP), 'w')
 
     for i in range(0, nepi):
         fr.write("%f," % Repi[i])
@@ -465,8 +465,8 @@ def main():
         pid, status = os.waitpid(-1, 0)
 
 
-    fr = open('%s_Ratios.csv' % (filename), 'w')
-    fv = open('%s_Var.csv' % (filename), 'w')
+    fr = open('%s_Hw.csv' % (filename), 'w')
+    fv = open('%s_HwVar.csv' % (filename), 'w')
 
     fr.write('# Program: %s\n' % sys.argv[0])
     fv.write('# Program: %s\n' % sys.argv[0])
@@ -505,8 +505,8 @@ def main():
     frs = [None] * NP
     fvs = [None] * NP
     for iP in range(0, NP):
-        rat_file[iP] = '%sRatios_%02d.csv' % (filename, iP)
-        var_file[iP] = '%sVar_%02d.csv' % (filename, iP)
+        rat_file[iP] = '%sHw_%02d.csv' % (filename, iP)
+        var_file[iP] = '%sHwVar_%02d.csv' % (filename, iP)
         frs[iP] = open(rat_file[iP], 'r')
         fvs[iP] = open(var_file[iP], 'r')
 
