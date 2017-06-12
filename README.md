@@ -24,11 +24,41 @@ Running the Programs
 
 The programs are Python (either 2.7 or 3.5) and require Numpy and Scipy. The easiest
 way to get Numpy and Scipy is to install Anaconda. The programs will run on multiple
-processors (cores) on machines so equipped.
+processors (cores) on machines so equipped and are located in the 'progs' directory.
 
 To run the programs, do:
 
     % program.py config_file.ini
+
+
+Output Tables
+-------------
+The 'tables' directory contains example results for some generic seismological
+assumptions. The output file name convension is easiest to describe with an
+example:
+
+
+    Rjb_S14_mechA_ar1p0_seis0_15_Ratios.csv
+
+where:
+ - "Rjb" is the the *filebase* parameter in the configuration file.
+ - "S14" is the *rup_dim_model* (either "S14" or "WC94").
+ - "mechA" specifies the rupture mechanism parameter *mech*, where "A" is one of "A", 
+    "SS", "N", or "R".
+ - "ar1p0" is the aspect ratio specified with the *AR* parameter, where the decimal point
+    is replaced with the letter 'p'.
+ - "seis0_15" is the range min/max seismogenic depths (in this case 0 to 15 km).
+ - "Ratios" is either "Ratios" or "Var" specifying whether the file contains Repi to Rjb
+    (or Rrup) ratios or variances.
+
+Each output table starts with six header lines (each beginning with "#") specifying
+the processing parameters. This is followed by a line (comma-separated) providing the
+column headers. The first column, "Repi_km", is the epicentral distance. The following
+columns R(magnitude) ("R" for "ratio") or V(magnitude) ("V" for "variance) provide the
+values for a given Repi and magnitude. The table is intended for bi-variate interpolation,
+linear in magnitude and logarithmic in distance.
+The ratios are Rjb (or Rrup) to Repi. 
+
 
 Program Details
 ---------------
@@ -122,32 +152,4 @@ as for *RjbMeanVar.py*, above, with the addition of:
  - **M** - The earthquake magnitude (float).
  - **zhyp** - The hypocentral depth of the earthquake (float).
 
-Output File Naming Convention
-------------------------------
-
-The file names take the form:
-
-    Rjb_S14_mechA_ar1p0_seis0_15_Ratios.csv
-
-where:
- - "Rjb" is the the *filebase* parameter in the configuration file.
- - "S14" is the *rup_dim_model* (either "S14" or "WC94").
- - "mechA" specifies the rupture mechanism parameter *mech*, where "A" is one of "A", 
-    "SS", "N", or "R".
- - "ar1p0" is the aspect ratio specified with the *AR* parameter, where the decimal point
-    is replaced with the letter 'p'.
- - "seis0_15" is the range min/max seismogenic depths (in this case 0 to 15 km).
- - "Ratios" is either "Ratios" or "Var" specifying whether the file contains Repi to Rjb
-    (or Rrup) ratios or variances.
-
-Output File Format
-------------------
-
-Each output file starts with six header lines (each beginning with "#") specifying
-the processing parameters. This is followed by a line (comma-separated) providing the
-column headers. The first column, "Repi_km", is the epicentral distance. The following
-columns R(magnitude) ("R" for "ratio") or V(magnitude) ("V" for "variance) provide the
-values for a given Repi and magnitude. The table is intended for bi-variate interpolation,
-linear in magnitude and logarithmic in distance.
-The ratios are Rjb (or Rrup) to Repi. 
 
