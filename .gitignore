@@ -6,4 +6,5 @@ build
 .cache
 .coverage
 .coverage.xml
-scenarios.egg-info/
+ps2ff.egg-info/
+htmlcov

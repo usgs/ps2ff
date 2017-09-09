@@ -1,2 +1,3 @@
 [run]
-omit = tests/*
+omit = setup.py,tests/*
+include=ps2ff/*,RrupRjbMeanVar_SingleEvent.py,run_ps2ff

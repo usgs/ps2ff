@@ -1,0 +1,173 @@
+#!/usr/bin/env python
+
+from __future__ import division
+from __future__ import print_function
+
+import sys
+import os
+import os.path
+import datetime
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+import time as time
+import numpy as np
+
+from ps2ff.integration_loops import mag_dist_loop
+
+
+def main():
+
+    start_datetime = datetime.datetime.now().isoformat()
+
+    config_file = sys.argv[-1]
+    if not os.path.exists(config_file):
+        raise Exception("Config file %s doesn't exist" % (config_file))
+
+    Config = configparser.ConfigParser()
+    Config.read(config_file)
+    section = Config.sections()[0]
+
+    what = Config.get(section, 'what')
+    NP = Config.getint(section, 'NP')
+    filebase = Config.get(section, 'filebase')
+    try:
+        datadir = Config.get(section, 'datadir')
+    except:
+        datadir = 'data'
+    rup_dim_model = Config.get(section, 'rup_dim_model')
+    mech = Config.get(section, 'mech')
+    LW = Config.getboolean(section, 'LW')
+    AR = Config.getfloat(section, 'AR')
+    ndip = Config.getint(section, 'ndip')
+    mindip_deg = Config.getfloat(section, 'mindip_deg')
+    maxdip_deg = Config.getfloat(section, 'maxdip_deg')
+    ntheta = Config.getint(section, 'ntheta')
+    nxny = Config.getint(section, 'nxny')
+    neps = Config.getint(section, 'neps')
+    trunc = Config.getfloat(section, 'trunc')
+    minmag = Config.getfloat(section, 'minmag')
+    maxmag = Config.getfloat(section, 'maxmag')
+    dmag = Config.getfloat(section, 'dmag')
+    minepi = Config.getfloat(section, 'minepi')
+    maxepi = Config.getfloat(section, 'maxepi')
+    nepi = Config.getint(section, 'nepi')
+    min_seis_depth = Config.getfloat(section, 'min_seis_depth')
+    max_seis_depth = Config.getfloat(section, 'max_seis_depth')
+    if Config.has_option(section, 'nz'):
+        nz = Config.getint(section, 'nz')
+    else:
+        nz = None
+
+    if os.path.isdir(datadir) is False:
+        os.mkdir(datadir)
+
+    if LW is True:
+        filename = "%s_%s_mech%s_LW_seis%g_%g" % \
+            (filebase, rup_dim_model, mech, min_seis_depth, max_seis_depth)
+    else:
+        filename = "%s_%s_mech%s_ar%.1f_seis%g_%g" % \
+            (filebase, rup_dim_model, mech, AR, min_seis_depth, max_seis_depth)
+
+    filename = filename.replace(".", "p")
+    filename = os.path.join(datadir, filename)
+
+    mindip = mindip_deg * np.pi / 180.0
+    maxdip = maxdip_deg * np.pi / 180.0
+    M = np.arange(minmag, maxmag + 0.001, dmag)
+    Repi = np.logspace(np.log10(minepi), np.log10(maxepi), nepi)
+
+    for iP in range(NP):
+        if os.fork() == 0:
+            mag_dist_loop(
+                what=what, rup_dim_model=rup_dim_model, mech=mech,
+                LW=LW, AR=AR, ndip=ndip, mindip=mindip, maxdip=maxdip,
+                min_seis_depth=min_seis_depth,
+                max_seis_depth=max_seis_depth,
+                ntheta=ntheta, nxny=nxny, neps=neps, trunc=trunc,
+                NP=NP, iP=iP, filename=filename,
+                M=M, Repi=Repi, nz=nz)
+
+    for iP in range(NP):
+        pid, status = os.waitpid(-1, 0)
+
+    fr = open('%s_Ratios.csv' % (filename), 'w')
+    fv = open('%s_Var.csv' % (filename), 'w')
+
+    fr.write('# Program: %s\n' % sys.argv[0])
+    fv.write('# Program: %s\n' % sys.argv[0])
+    fr.write('# Config file: %s\n' % config_file)
+    fv.write('# Config file: %s\n' % config_file)
+    fr.write('# Process start: %s\n' % start_datetime)
+    fv.write('# Process start: %s\n' % start_datetime)
+    fr.write('# Process finish: %s\n' % datetime.datetime.now().isoformat())
+    fv.write('# Process finish: %s\n' % datetime.datetime.now().isoformat())
+    fr.write('# rup_dim_model = %s, mech = %s, LW = %s, AR = %s, '
+             'ndip = %d, mindip = %f, maxdip = %f, ntheta = %d, nxny = %d\n'
+             % (rup_dim_model, mech, LW, AR, ndip, mindip, maxdip,
+                ntheta, nxny))
+    fv.write('# rup_dim_model = %s, mech = %s, LW = %s, AR = %s, '
+             'ndip = %d, mindip = %f, maxdip = %f, ntheta = %d, nxny = %d\n'
+             % (rup_dim_model, mech, LW, AR, ndip, mindip, maxdip,
+                ntheta, nxny))
+    fr.write('# neps = %d, trunc = %f, min_seis_depth = %f, '
+             'max_seis_depth = %f\n'
+             % (neps, trunc, min_seis_depth, max_seis_depth))
+    fv.write('# neps = %d, trunc = %f, min_seis_depth = %f, '
+             'max_seis_depth = %f\n'
+             % (neps, trunc, min_seis_depth, max_seis_depth))
+
+    fr.write('"Repi_km",')
+    fv.write('"Repi_km",')
+
+    nmag = np.size(M)
+    for j in range(nmag):
+        fr.write('"R%g"' % M[j])
+        fv.write('"V%g"' % M[j])
+        if j < nmag - 1:
+            fr.write(',')
+            fv.write(',')
+    fr.write("\n")
+    fv.write("\n")
+
+    rat_file = [None] * NP
+    var_file = [None] * NP
+    frs = [None] * NP
+    fvs = [None] * NP
+    for iP in range(NP):
+        rat_file[iP] = '%sRatios_%02d.csv' % (filename, iP)
+        var_file[iP] = '%sVar_%02d.csv' % (filename, iP)
+        frs[iP] = open(rat_file[iP], 'r')
+        fvs[iP] = open(var_file[iP], 'r')
+
+    for line in frs[0]:
+        fr.write(line)
+        line = fvs[0].readline()
+        fv.write(line)
+        for iP in range(1, NP):
+            line = frs[iP].readline()
+            if line:
+                fr.write(line)
+            line = fvs[iP].readline()
+            if line:
+                fv.write(line)
+
+    for iP in range(NP):
+        frs[iP].close()
+        fvs[iP].close()
+        os.unlink(rat_file[iP])
+        os.unlink(var_file[iP])
+
+    fr.close()
+    fv.close()
+
+
+if __name__ == "__main__":
+
+    start_time = time.time()
+
+    main()
+
+    print("Total execution time %f seconds." % (time.time() - start_time))
+    sys.exit(0)
