@@ -3,8 +3,8 @@
 
 
 # ps2ff
-Produce approximated finite fault distances and variance corrections given point source 
-information (e.g., Repi (epcentral distance) to Rjb (Joyner-Boore distance) or Rrup 
+Produce approximated finite fault distances and variance corrections given point source
+information (e.g., Repi (epcentral distance) to Rjb (Joyner-Boore distance) or Rrup
 (closest distance to rupture).
 
 
@@ -43,7 +43,7 @@ example:
 where:
  - "Rjb" is the the *filebase* parameter in the configuration file.
  - "S14" is the *rup_dim_model* (either "S14" or "WC94").
- - "mechA" specifies the rupture mechanism parameter *mech*, where "A" is one of "A", 
+ - "mechA" specifies the rupture mechanism parameter *mech*, where "A" is one of "A",
     "SS", "N", or "R".
  - "ar1p0" is the aspect ratio specified with the *AR* parameter, where the decimal point
     is replaced with the letter 'p'.
@@ -57,20 +57,20 @@ column headers. The first column, "Repi_km", is the epicentral distance. The fol
 columns R(magnitude) ("R" for "ratio") or V(magnitude) ("V" for "variance) provide the
 values for a given Repi and magnitude. The table is intended for bi-variate interpolation,
 linear in magnitude and logarithmic in distance.
-The ratios are Rjb (or Rrup) to Repi. 
+The ratios are Rjb (or Rrup) to Repi.
 
 
 Program Details
 ---------------
 
-*RjbMeanVar.py, HwMeanVar.py* 
+*RjbMeanVar.py, HwMeanVar.py*
 
 RjbMeanVar.py produces tables of Repi-to-Rjb ratios and variances, and HwMeanVar.py
 produces tables of the probability of a site being on the hangingwall and the variance
 of the probability. These two programs are grouped together because they have identical
-inputs. 
+inputs.
 Example config
-file "test_Rjb.ini". 
+file "test_Rjb.ini".
 
 The parameters are:
 
@@ -83,23 +83,23 @@ The parameters are:
  - **rup_dim_model** - If 'WC94' use Wells and Coppersmith (1994) model, otherwise use Somerville
 (2014).
 
- - **mech** - The rupture mechanism. One of "A" (all mechanisms), "SS" (strike-slip), "N" (normal), 
+ - **mech** - The rupture mechanism. One of "A" (all mechanisms), "SS" (strike-slip), "N" (normal),
 or "R" (reverse).
 
- - **LW** - (True or False) Use separate rupture Length and Width distributions rather than a 
+ - **LW** - (True or False) Use separate rupture Length and Width distributions rather than a
 rupture area distribution with a fixed aspect ratio.
 
  - **AR** - The Aspect Ratio (Length/Width) of the rupture. The aspect ratio will be maintained
-until the rupture width spans the seismogenic zone, after which only the rupture 
+until the rupture width spans the seismogenic zone, after which only the rupture
 length will increase.
 
- - **min_seis_depth** - The minimum seismogenic depth (km, integer).
+ - **min_seis_depth** - The minimum seismogenic depth (km, float).
 
- - **max_seis_depth** - The maximum seismogenic depth (km, integer).
+ - **max_seis_depth** - The maximum seismogenic depth (km, float).
 
- - **mindip_deg** - The minimum rupture dip in degrees (0 min, 90 max, integer).
+ - **mindip_deg** - The minimum rupture dip in degrees (0 min, 90 max, float).
 
- - **maxdip_deg** - The maximum rupture dip in degrees (0 min 90 max, integer).
+ - **maxdip_deg** - The maximum rupture dip in degrees (0 min 90 max, float).
 
  - **ndip** - The number of discrete steps in dip to use in the integration. Larger numbers
 increase the accuracy of the result, but take longer to run.
@@ -132,22 +132,22 @@ in log space.
 *RrupMeanVar.py*
 
 Produces tables of Repi-to-Rrup ratios and variances. Example config
-file "test_Rrup.ini". 
+file "test_Rrup.ini".
 
 The parameters are the same as for RjbMeanVar.py, above, with the
 addition of:
 
- - **nz** - The number of steps in depth for Ztor. For any given rupture width and dip in the 
+ - **nz** - The number of steps in depth for Ztor. For any given rupture width and dip in the
 integration, Ztor ranges from (max_seis_depth - width * sin(dip)) to min_seis_depth.
 
-*RrupRjbMeanVar_SingleEvent.py* 
+*RrupRjbMeanVar_SingleEvent.py*
 
-Produces tables of Repi-to-Rrup and Repi-to-Rjb ratios and variances as a function of 
-backazimuth for a particular earthquake magnitude and hypocentral depth. 
-Example config file "test_single.ini". 
+Produces tables of Repi-to-Rrup and Repi-to-Rjb ratios and variances as a function of
+backazimuth for a particular earthquake magnitude and hypocentral depth.
+Example config file "test_single.ini".
 
-The parameters NP, datadir, rum_dim_model, mech, AR, ndip, mindip_deg, maxdip_deg, ntheta, 
-nxny, neps, trunc, minepi, maxepi, nepi, min_seis_depth, and max_seis_depth, are the same 
+The parameters NP, datadir, rum_dim_model, mech, AR, ndip, mindip_deg, maxdip_deg, ntheta,
+nxny, neps, trunc, minepi, maxepi, nepi, min_seis_depth, and max_seis_depth, are the same
 as for *RjbMeanVar.py*, above, with the addition of:
  - **M** - The earthquake magnitude (float).
  - **zhyp** - The hypocentral depth of the earthquake (float).
