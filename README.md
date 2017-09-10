@@ -65,9 +65,6 @@ file "test_Rjb.ini". The parameters in the config file are:
 
  - `NP` The number of processors (cores) to use. Minimum 1.
 
- - `filebase` The base name of the output file (see output file naming
-   convention below).
-
  - `datadir` - The directory into which the output files are written. If
    unspecified, it uses "./data".
 
