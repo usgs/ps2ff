@@ -14,10 +14,10 @@ def test_rjb_WC94():
             "tests/data/test_Rjb_WC94_mechA_ar1p7_seis0_20_Var.csv",
             header=6)
     r2 = pd.DataFrame.from_csv(
-            "TestData/test_Rjb_WC94_mechA_ar1p7_seis0_20_Ratios.csv",
+            "TestData/Rjb_WC94_mechA_ar1p7_seis0_20_Ratios.csv",
             header=6)
     v2 = pd.DataFrame.from_csv(
-            "TestData/test_Rjb_WC94_mechA_ar1p7_seis0_20_Var.csv",
+            "TestData/Rjb_WC94_mechA_ar1p7_seis0_20_Var.csv",
             header=6)
 
     pd.util.testing.assert_frame_equal(r1, r2)
@@ -37,10 +37,10 @@ def test_rjb_S14():
             "tests/data/test_Rjb_S14_mechA_ar1p7_seis0_20_Var.csv",
             header=6)
     r2 = pd.DataFrame.from_csv(
-            "TestData/test_Rjb_S14_mechA_ar1p7_seis0_20_Ratios.csv",
+            "TestData/Rjb_S14_mechA_ar1p7_seis0_20_Ratios.csv",
             header=6)
     v2 = pd.DataFrame.from_csv(
-            "TestData/test_Rjb_S14_mechA_ar1p7_seis0_20_Var.csv",
+            "TestData/Rjb_S14_mechA_ar1p7_seis0_20_Var.csv",
             header=6)
 
     pd.util.testing.assert_frame_equal(r1, r2)
@@ -60,10 +60,10 @@ def test_rrup_S14():
             "tests/data/test_Rrup_S14_mechA_ar2p0_seis0_15_Var.csv",
             header=6)
     r2 = pd.DataFrame.from_csv(
-            "TestData/test_Rrup_S14_mechA_ar2p0_seis0_15_Ratios.csv",
+            "TestData/Rrup_S14_mechA_ar2p0_seis0_15_Ratios.csv",
             header=6)
     v2 = pd.DataFrame.from_csv(
-            "TestData/test_Rrup_S14_mechA_ar2p0_seis0_15_Var.csv",
+            "TestData/Rrup_S14_mechA_ar2p0_seis0_15_Var.csv",
             header=6)
 
     pd.util.testing.assert_frame_equal(r1, r2)
@@ -83,10 +83,10 @@ def test_rrup_WC94():
             "tests/data/test_Rrup_WC94_mechA_ar2p0_seis0_15_Var.csv",
             header=6)
     r2 = pd.DataFrame.from_csv(
-            "TestData/test_Rrup_WC94_mechA_ar2p0_seis0_15_Ratios.csv",
+            "TestData/Rrup_WC94_mechA_ar2p0_seis0_15_Ratios.csv",
             header=6)
     v2 = pd.DataFrame.from_csv(
-            "TestData/test_Rrup_WC94_mechA_ar2p0_seis0_15_Var.csv",
+            "TestData/Rrup_WC94_mechA_ar2p0_seis0_15_Var.csv",
             header=6)
 
     pd.util.testing.assert_frame_equal(r1, r2)

@@ -7,6 +7,7 @@ import sys
 import os
 import os.path
 import datetime
+import copy
 try:
     import configparser
 except ImportError:
@@ -31,7 +32,8 @@ def main():
 
     what = Config.get(section, 'what')
     NP = Config.getint(section, 'NP')
-    filebase = Config.get(section, 'filebase')
+#    filebase = Config.get(section, 'filebase')
+    filebase = copy.copy(what)
     try:
         datadir = Config.get(section, 'datadir')
     except:
