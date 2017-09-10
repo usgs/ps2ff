@@ -131,7 +131,8 @@ config file "test_Rjb.ini". The parameters in the config file are:
 
 `RrupRjbMeanVar_SingleEvent.py` roduces tables of Repi-to-Rrup and Repi-to-Rjb
 ratios and variances as a function of backazimuth for a particular earthquake
-magnitude and hypocentral depth. Example config file "test_single.ini".
+magnitude and hypocentral depth. Example config file is 
+`<repository>/tests/config/test_single.ini`.
 
 The parameters are the same as for `run_ps2ff`, with the addition of:
 - `M` The earthquake magnitude.
