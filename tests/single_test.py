@@ -5,7 +5,7 @@ from impactutils.io.cmd import get_command_output
 
 
 def test_single():
-    cmd = "RrupRjbMeanVar_SingleEvent.py tests/config/test_single.ini"
+    cmd = "run_ps2ff_single_event tests/config/test_single.ini"
     rc, so, se = get_command_output(cmd)
 
     rjb1 = pd.DataFrame.from_csv(
