@@ -70,10 +70,12 @@ file "test_Rjb.ini". The parameters in the config file are:
 
  - `rup_dim_model` String to select the magnitude scaling relationship.
    Currently supported values are:
+
         - 'WC94' for Wells and Coppersmith (1994),
         - 'S14' for Somerville (2014).
 
  - `mech` The rupture mechanism, only used by some scaling relationships:
+
         - 'A' for all/unknown mechanisms)
         - 'SS' for strike-slip,
 	- 'N' for normal,
