@@ -47,7 +47,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
             width = 10**(-0.76 + 0.27 * M + sig_width * epsmid)
             sig_area = 0.22
             area = np.power(10, -3.42 + 0.90*M +
-                            sig_area * epsmid.reshape(1, -1))
+                            sig_area * epsmid)
         if mech == "R":
             sig_length = 0.16
             length = 10**(-2.42 + 0.58 * M + sig_length * epsmid)
@@ -55,7 +55,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
             width = 10**(-1.61 + 0.41 * M + sig_width * epsmid)
             sig_area = 0.26
             area = np.power(10, -3.99 + 0.98*M +
-                            sig_area * epsmid.reshape(1, -1))
+                            sig_area * epsmid)
         if mech == "N":
             sig_length = 0.17
             length = 10**(-1.88 + 0.50 * M) + sig_length * epsmid
@@ -63,7 +63,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
             width = 10**(-1.14 + 0.35 * M + sig_width * epsmid)
             sig_area = 0.22
             area = np.power(10, -2.78 + 0.82*M +
-                            sig_area * epsmid.reshape(1, -1))
+                            sig_area * epsmid)
         if mech == "A":
             sig_length = 0.16
             length = 10**(-2.44 + 0.59 * M + sig_length * epsmid)
@@ -71,13 +71,13 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
             width = 10**(-1.01 + 0.32 * M + sig_width * epsmid)
             sig_area = 0.24
             area = np.power(10, -3.49 + 0.91*M +
-                            sig_area * epsmid.reshape(1, -1))
+                            sig_area * epsmid)
     elif rup_dim_model == 'S14':
         # Somerville (2014) model:
         #     - No length or width
         #     - No mechanism dependence
         sig_area = 0.3
-        area = np.power(10, M - 4.25 + sig_area * epsmid.reshape(1, -1))
+        area = np.power(10, M - 4.25 + sig_area * epsmid)
         length = None
         sig_length = None
         width = None

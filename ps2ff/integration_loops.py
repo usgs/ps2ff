@@ -116,6 +116,139 @@ def mag_dist_loop(what, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
     sys.exit(0)
 
 
+def single_event_loop(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
+                      min_seis_depth=0, max_seis_depth=20,
+                      rup_dim_model='WC94', mech="A", AR=1,
+                      ntheta=73, nxny=100, zhyp=0, bytheta=False,
+                      neps=10, trunc=3,
+                      NP=1, iP=0, rjb_filename='junk', rrup_filename='junk',
+                      M=6.0, Repi=100):
+    """
+    Args:
+        ndip (int): Number of integration steps for dip.
+        mindip (float): The minimum rupture dip in degrees (0 to 90).
+        maxdip (float): The maximum rupture dip in degrees (0 to 90).
+        min_seis_depth (float): The minimum seismogenic depth (km).
+        max_seis_depth (float): The maximum seismogenic depth (km).
+        rup_dim_model (str): String indicating the model for compputing the
+            rupture dimensions from magnitude. Supported values are:
+                - 'WC94'
+                - 'S14'
+                - 'HB08'
+        mech (str): Optional string indicating earthquake mechanism, used by
+            some of the models. Anything other than 'R', 'N', 'SS', or 'A'
+            (the default).
+        AR (float): Aspect ratio (length/width).
+        ntheta (int): Number of integration steps for theta.
+        nxny (int): Number of integration steps in the x and y direction.
+        zhyp (float): Epicenter depth (km).
+        bytheta (bool): Output results in theta bins.
+        neps (int): Number of integration steps for epsilon.
+        trunc (float): Epsilon truncation level.
+        NP (int): Number of forked processes.
+        iP (int): Multiple process index.
+        rjb_filename (str): Output file name for Rjb results.
+        rrup_filename (str): Output file name for Rrup results.
+        M (float): Earthquake magnitude.
+        Repi (float): Epicentral distance (km).
+    """
+    nepi = np.size(Repi)
+
+    if NP != 1:
+        ii = range(iP, nepi, NP)
+        Repi = Repi[ii]
+        nepi = np.size(Repi)
+
+    if bytheta is True:
+        Rrup_ratio = np.zeros((nepi, ntheta))
+        Rrup_variance = np.zeros((nepi, ntheta))
+        Rjb_ratio = np.zeros((nepi, ntheta))
+        Rjb_variance = np.zeros((nepi, ntheta))
+    else:
+        Rrup_ratio = np.zeros((nepi, 1))
+        Rrup_variance = np.zeros((nepi, 1))
+        Rjb_ratio = np.zeros((nepi, 1))
+        Rjb_variance = np.zeros((nepi, 1))
+
+    for i in range(0, nepi):
+        if bytheta is True:
+            theta = np.linspace(0, np.pi*2, ntheta)  # in rad
+            for j in range(0, ntheta):
+                rrup_var, rrup_avg, rjb_var, rjb_avg = \
+                    single_event_inner_loop(
+                            M, Repi[i],
+                            ndip=ndip, mindip=mindip, maxdip=maxdip,
+                            min_seis_depth=min_seis_depth,
+                            max_seis_depth=max_seis_depth,
+                            rup_dim_model=rup_dim_model, mech=mech, AR=AR,
+                            theta=np.array([theta[j]]), bytheta=bytheta,
+                            ntheta=1, nxny=nxny, zhyp=zhyp,
+                            neps=neps, trunc=trunc)
+                Rrup_ratio[i, j] = rrup_avg / Repi[i]
+                Rrup_variance[i, j] = rrup_var
+                Rjb_ratio[i, j] = rjb_avg / Repi[i]
+                Rjb_variance[i, j] = rjb_var
+                print("        Proc %d j=%d of %d %s" % (iP, j+1, ntheta,
+                      datetime.datetime.now().isoformat()))
+                print("Proc %d done with %d of %d distances %s" %
+                      (iP, i+1, nepi, datetime.datetime.now().isoformat()))
+        else:
+            rrup_var, rrup_avg, rjb_var, rjb_avg = \
+                single_event_inner_loop(
+                        M, Repi[i],
+                        ndip=ndip, mindip=mindip, maxdip=maxdip,
+                        min_seis_depth=min_seis_depth,
+                        max_seis_depth=max_seis_depth,
+                        rup_dim_model=rup_dim_model, mech=mech, AR=AR,
+                        theta=0, bytheta=bytheta,
+                        ntheta=ntheta, nxny=nxny, zhyp=zhyp,
+                        neps=neps, trunc=trunc)
+            Rrup_ratio[i, 0] = rrup_avg / Repi[i]
+            Rrup_variance[i, 0] = rrup_var
+            Rjb_ratio[i, 0] = rjb_avg / Repi[i]
+            Rjb_variance[i, 0] = rjb_var
+            print("        Proc %d j=%d of %d %s" % (iP, 1, 1,
+                  datetime.datetime.now().isoformat()))
+            print("Proc %d done with %d of %d distances %s" % (iP, i+1, nepi,
+                  datetime.datetime.now().isoformat()))
+    fr_rrup = open('%sRatios_%02d.csv' % (rrup_filename, iP), 'w')
+    fv_rrup = open('%sVar_%02d.csv' % (rrup_filename, iP), 'w')
+    fr_rjb = open('%sRatios_%02d.csv' % (rjb_filename, iP), 'w')
+    fv_rjb = open('%sVar_%02d.csv' % (rjb_filename, iP), 'w')
+
+    for i in range(0, nepi):
+        fr_rrup.write("%f," % Repi[i])
+        fv_rrup.write("%f," % Repi[i])
+        fr_rjb.write("%f," % Repi[i])
+        fv_rjb.write("%f," % Repi[i])
+        if bytheta is True:
+            for j in range(0, ntheta):
+                fr_rrup.write("%f" % Rrup_ratio[i, j])
+                fv_rrup.write("%f" % Rrup_variance[i, j])
+                fr_rjb.write("%f" % Rjb_ratio[i, j])
+                fv_rjb.write("%f" % Rjb_variance[i, j])
+                if j < ntheta - 1:
+                    fr_rrup.write(",")
+                    fv_rrup.write(",")
+                    fr_rjb.write(",")
+                    fv_rjb.write(",")
+            fr_rrup.write("\n")
+            fv_rrup.write("\n")
+            fr_rjb.write("\n")
+            fv_rjb.write("\n")
+        else:
+            fr_rrup.write("%f\n" % Rrup_ratio[i, 0])
+            fv_rrup.write("%f\n" % Rrup_variance[i, 0])
+            fr_rjb.write("%f\n" % Rjb_ratio[i, 0])
+            fv_rjb.write("%f\n" % Rjb_variance[i, 0])
+
+    fr_rrup.close()
+    fv_rrup.close()
+    fr_rjb.close()
+    fv_rjb.close()
+    sys.exit(0)
+
+
 def rjb_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                    min_seis_depth=0,  max_seis_depth=20,
                    rup_dim_model='WC94', mech="A", LW=True, AR=1,
@@ -131,12 +264,35 @@ def rjb_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
     We do this so that parallizaiton is simple: this function can be forked
     onto different cores.
 
-    See the README for argument definitions.
+    Args:
+        M (float): Earthquake magnitude.
+        Repi (float): Epicentral distance (km).
+        ndip (int): Number of integration steps for dip.
+        mindip (float): The minimum rupture dip in degrees (0 to 90).
+        maxdip (float): The maximum rupture dip in degrees (0 to 90).
+        min_seis_depth (float): The minimum seismogenic depth (km).
+        max_seis_depth (float): The maximum seismogenic depth (km).
+        rup_dim_model (str): String indicating the model for compputing the
+            rupture dimensions from magnitude. Supported values are:
+                - 'WC94'
+                - 'S14'
+                - 'HB08'
+        mech (str): Optional string indicating earthquake mechanism, used by
+            some of the models. Anything other than 'R', 'N', 'SS', or 'A'
+            (the default).
+        LW (bool): Compute length and width from magnitude, and integrate
+            across them individually. Alternative is to assume an aspect
+            ratio.
+        AR (float): Aspect ratio (length/width).
+        ntheta (int): Number of integration steps for theta.
+        nxny (int): Number of integration steps in the x and y direction.
+        neps (int): Number of integration steps for epsilon.
+        trunc (float): Epsilon truncation level.
+
+    Returns:
+        tuple: Rjb variance, mean Rjb.
     """
     max_seis_thickness = max_seis_depth - min_seis_depth
-    # Same as before, but position of P is random so have to integrate from
-    # theta = 0 to 2pi and then for dx = 0 to L and dy = 0 to SW
-    #  and dip from 0 to pi/2
     if ndip != 1:
         dip = np.linspace(mindip, maxdip, ndip)
         ddip = dip[1] - dip[0]
@@ -334,11 +490,45 @@ def rrup_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                     ntheta=73, nxny=50, nz=20,
                     neps=10, trunc=3):
     """
+    This function evaluates the Rrup mean and var integral
+    for a single M/R pair, looping over:
+       - dip
+       - dx, dy (location of hypocenter on fault)
+       - theta (angle to fault)
+       - epsilon (dummy variable for L/W/A integration)
+    We do this so that parallizaiton is simple: this function can be forked
+    onto different cores.
+
+    Args:
+        M (float): Earthquake magnitude.
+        Repi (float): Epicentral distance (km).
+        ndip (int): Number of integration steps for dip.
+        mindip (float): The minimum rupture dip in degrees (0 to 90).
+        maxdip (float): The maximum rupture dip in degrees (0 to 90).
+        min_seis_depth (float): The minimum seismogenic depth (km).
+        max_seis_depth (float): The maximum seismogenic depth (km).
+        rup_dim_model (str): String indicating the model for compputing the
+            rupture dimensions from magnitude. Supported values are:
+                - 'WC94'
+                - 'S14'
+                - 'HB08'
+        mech (str): Optional string indicating earthquake mechanism, used by
+            some of the models. Anything other than 'R', 'N', 'SS', or 'A'
+            (the default).
+        LW (bool): Compute length and width from magnitude, and integrate
+            across them individually. Alternative is to assume an aspect
+            ratio.
+        AR (float): Aspect ratio (length/width).
+        ntheta (int): Number of integration steps for theta.
+        nxny (int): Number of integration steps in the x and y direction.
+        nz (int): Number of integration steps in depth.
+        neps (int): Number of integration steps for epsilon.
+        trunc (float): Epsilon truncation level.
+
+    Returns:
+        tuple: Rjb variance, mean Rjb.
     """
     max_seis_thickness = max_seis_depth - min_seis_depth
-    # Same as before, but position of P is random so have to integrate from
-    # theta = 0 to 2pi and then for dx = 0 to L and dy = 0 to SW
-    # and dip from 0 to pi/2
     if ndip != 1:
         dip = np.linspace(mindip, maxdip, ndip)
         ddip = dip[1] - dip[0]
@@ -588,3 +778,231 @@ def rrup_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
         Rrup_var = np.trapz(peps*integrand_width2, dx=d_eps) - Rrup_avg**2
 
     return Rrup_var, Rrup_avg
+
+
+def single_event_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
+                            min_seis_depth=0, max_seis_depth=20,
+                            rup_dim_model='WC94', mech="A", AR=1,
+                            theta=0, bytheta=False, ntheta=73, nxny=50, zhyp=0,
+                            neps=10, trunc=3):
+    """
+    Args:
+        M (float): Earthquake magnitude.
+        Repi (float): Epicentral distance (km).
+        ndip (int): Number of integration steps for dip.
+        mindip (float): The minimum rupture dip in degrees (0 to 90).
+        maxdip (float): The maximum rupture dip in degrees (0 to 90).
+        min_seis_depth (float): The minimum seismogenic depth (km).
+        max_seis_depth (float): The maximum seismogenic depth (km).
+        rup_dim_model (str): String indicating the model for compputing the
+            rupture dimensions from magnitude. Supported values are:
+                - 'WC94'
+                - 'S14'
+                - 'HB08'
+        mech (str): Optional string indicating earthquake mechanism, used by
+            some of the models. Anything other than 'R', 'N', 'SS', or 'A'
+            (the default).
+        AR (float): Aspect ratio (length/width).
+        theta (float): Source-to-site angle (radians).
+        bytheta (bool): Output results in theta bins.
+        ntheta (int): Number of integration steps for theta; used if `bytheta`
+            is True.
+        nxny (int): Number of integration steps in the x and y direction.
+        zhyp (float): Epicenter depth (km).
+        neps (int): Number of integration steps for epsilon.
+        trunc (float): Epsilon truncation level.
+
+    Returns:
+        tuple: Rrup variance, Rrup mean, Rjb variance, Rjb mean
+    """
+    if ndip != 1:
+        dip = np.linspace(mindip, maxdip, ndip)
+        ddip = dip[1] - dip[0]
+        dipnorm = 1.0 / (maxdip - mindip)
+    else:
+        dip = np.array([mindip])
+
+    length, sig_length, width, sigw, area, sig_area = \
+        dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech)
+#    area = area[0]  # fix dimensions
+
+    if bytheta is False:
+        theta = np.linspace(0, 2*np.pi, ntheta)  # in rad
+        dt = theta[1] - theta[0]
+
+    one_over_2pi = 1.0/2.0/np.pi
+
+    epsmid, peps, d_eps = compute_epsilon(neps, trunc)
+
+    RrupIntegrand_a = np.zeros(neps) + np.nan
+    RrupIntegrand_a2 = np.zeros(neps) + np.nan
+    RrupIntegrand_d = np.zeros(ndip)
+    RrupIntegrand_d2 = np.zeros(ndip)
+    RrupIntegrand_y = np.zeros(nxny)
+    RrupIntegrand_y2 = np.zeros(nxny)
+    RrupIntegrand_x = np.zeros(nxny)
+    RrupIntegrand_x2 = np.zeros(nxny)
+
+    RjbIntegrand_a = np.zeros(neps) + np.nan
+    RjbIntegrand_a2 = np.zeros(neps) + np.nan
+    RjbIntegrand_d = np.zeros(ndip)
+    RjbIntegrand_d2 = np.zeros(ndip)
+    RjbIntegrand_y = np.zeros(nxny)
+    RjbIntegrand_y2 = np.zeros(nxny)
+    RjbIntegrand_x = np.zeros(nxny)
+    RjbIntegrand_x2 = np.zeros(nxny)
+
+    Rjb = np.zeros(ntheta)
+    Rrup = np.zeros(ntheta)
+    Rrupp = np.zeros(ntheta)
+    Ry = np.zeros(ntheta)
+    nx = nxny
+    ny = nxny
+
+    for m in range(0, neps):  # area
+        W = np.sqrt(area[m]/AR)
+        for k in range(0, ndip):  # dip
+            if np.allclose(dip[k], 0) is False:
+                ZW = W * np.sin(dip[k])  # vertical projection of W
+                # Overwrite W if it extends too far and recompute SW, x, dx
+                Ztor = np.max(np.array([zhyp - ZW, min_seis_depth]))
+                Zbor = np.min(np.array([zhyp + ZW, max_seis_depth]))
+                W = (Zbor - Ztor)/np.sin(dip[k])
+            else:
+                Ztor = zhyp
+
+            L = area[m]/W
+            SW = W * np.cos(dip[k])
+            x = np.linspace(0, SW, nx)
+            dx = x[1] - x[0]
+            one_over_L = 1.0 / L
+            one_over_sw = 1.0 / SW
+            y = np.linspace(0, L, ny)
+            dy = y[1] - y[0]
+            for i in range(0, nx):  # x
+                xj = x[i] + Repi * np.cos(theta)
+
+                xltz = xj < 0
+                xgez_and_xlesw = (xj >= 0) & (xj <= SW)
+                xgtsw = xj > SW
+                c1x = xltz
+                c2x = xgez_and_xlesw
+                c3x = xgtsw
+                c4x = xltz
+                c5x = xgez_and_xlesw
+                c6x = xgtsw
+                c7x = xltz
+                c8x = xgez_and_xlesw
+                c9x = xgtsw
+                for j in range(0, ny):
+                    yi = y[j] + Repi * np.sin(theta)
+
+                    cca = yi > L
+                    ccb = (yi >= 0) & (yi <= L)
+                    ccc = yi < 0
+                    c1 = c1x & cca
+                    c2 = c2x & cca
+                    c3 = c3x & cca
+                    c4 = c4x & ccb
+                    c5 = c5x & ccb
+                    c6 = c6x & ccb
+                    c7 = c7x & ccc
+                    c8 = c8x & ccc
+                    c9 = c9x & ccc
+                    xx = xj[c1]
+                    yy = yi[c1] - L
+                    Rjb[c1] = np.sqrt(xx*xx + yy*yy)
+                    Rjb[c2] = yi[c2] - L
+                    xx = xj[c3] - SW
+                    yy = yi[c3] - L
+                    Rjb[c3] = np.sqrt(xx*xx + yy*yy)
+                    Rjb[c4] = np.abs(xj[c4])
+                    Rjb[c5] = 0
+                    Rjb[c6] = xj[c6] - SW
+                    xx = xj[c7]
+                    yy = yi[c7]
+                    Rjb[c7] = np.sqrt(xx*xx + yy*yy)
+                    Rjb[c8] = np.abs(yi[c8])
+                    xx = xj[c9] - SW
+                    yy = yi[c9]
+                    Rjb[c9] = np.sqrt(xx*xx + yy*yy)
+                    # Compute Rx and Ry
+                    Rx = xj
+                    Ry[c1 | c2 | c3] = yi[c1 | c2 | c3] - L
+                    Ry[c4 | c5 | c6] = 0
+                    Ry[c7 | c8 | c9] = np.abs(yi[c7 | c8 | c9])
+                    # Compute Rrup prime, then Rrup
+                    # using Kaklamanos eqns
+                    if dip[k] == np.pi/2:
+                        Rrup = np.sqrt(Rjb**2 + Ztor**2)
+                    else:
+                        tmp = (Ztor * np.tan(dip[k]))
+                        r1 = Rx < tmp
+                        Rrupp[r1] = np.sqrt(Rx[r1]**2 + Ztor**2)
+                        r2 = (tmp <= Rx) & (Rx <= (tmp + W/np.cos(dip[k])))
+                        Rrupp[r2] = Rx[r2]*np.sin(dip[k]) + Ztor*np.cos(dip[k])
+                        r3 = Rx > (tmp + W/np.cos(dip[k]))
+                        Rrupp[r3] = np.sqrt((Rx[r3] - W*np.cos(dip[k]))**2 +
+                                            (Ztor + W*np.sin(dip[k]))**2)
+
+                    Rrup = np.sqrt(Rrupp**2 + Ry**2)
+                    Rrup2 = Rrup * Rrup
+                    Rjb2 = Rjb * Rjb
+                    if bytheta is False:
+                        RrupIntegrand_y[j] = one_over_2pi * \
+                            np.trapz(Rrup, dx=dt)
+                        RrupIntegrand_y2[j] = one_over_2pi * \
+                            np.trapz(Rrup2, dx=dt)
+                        RjbIntegrand_y[j] = one_over_2pi * \
+                            np.trapz(Rjb, dx=dt)
+                        RjbIntegrand_y2[j] = one_over_2pi * \
+                            np.trapz(Rjb2, dx=dt)
+                    else:
+                        RrupIntegrand_y[j] = Rrup
+                        RrupIntegrand_y2[j] = Rrup2
+                        RjbIntegrand_y[j] = Rjb
+                        RjbIntegrand_y2[j] = Rjb2
+
+                RrupIntegrand_x[i] = one_over_L * \
+                    np.trapz(RrupIntegrand_y, dx=dy)
+                RrupIntegrand_x2[i] = one_over_L * \
+                    np.trapz(RrupIntegrand_y2, dx=dy)
+                RjbIntegrand_x[i] = one_over_L * \
+                    np.trapz(RjbIntegrand_y, dx=dy)
+                RjbIntegrand_x2[i] = one_over_L * \
+                    np.trapz(RjbIntegrand_y2, dx=dy)
+
+            RrupIntegrand_d[k] = one_over_sw * \
+                np.trapz(RrupIntegrand_x, dx=dx)
+            RrupIntegrand_d2[k] = one_over_sw * \
+                np.trapz(RrupIntegrand_x2, dx=dx)
+            RjbIntegrand_d[k] = one_over_sw * \
+                np.trapz(RjbIntegrand_x, dx=dx)
+            RjbIntegrand_d2[k] = one_over_sw * \
+                np.trapz(RjbIntegrand_x2, dx=dx)
+        if ndip == 1:
+            RrupIntegrand_a[m] = RrupIntegrand_d[0]
+            RrupIntegrand_a2[m] = RrupIntegrand_d2[0]
+            RjbIntegrand_a[m] = RjbIntegrand_d[0]
+            RjbIntegrand_a2[m] = RjbIntegrand_d2[0]
+        else:
+            RrupIntegrand_a[m] = dipnorm * \
+                np.trapz(RrupIntegrand_d, dx=ddip)
+            RrupIntegrand_a2[m] = dipnorm * \
+                np.trapz(RrupIntegrand_d2, dx=ddip)
+            RjbIntegrand_a[m] = dipnorm * \
+                np.trapz(RjbIntegrand_d, dx=ddip)
+            RjbIntegrand_a2[m] = dipnorm * \
+                np.trapz(RjbIntegrand_d2, dx=ddip)
+    if neps == 1:
+        Rrup_avg = RrupIntegrand_a[0]
+        Rrup_var = RrupIntegrand_a2[0] - Rrup_avg**2
+        Rjb_avg = RjbIntegrand_a[0]
+        Rjb_var = RjbIntegrand_a2[0] - Rjb_avg**2
+    else:
+        Rrup_avg = np.trapz(peps*RrupIntegrand_a, dx=d_eps)
+        Rrup_var = np.trapz(peps*RrupIntegrand_a2, dx=d_eps) - Rrup_avg**2
+        Rjb_avg = np.trapz(peps*RjbIntegrand_a, dx=d_eps)
+        Rjb_var = np.trapz(peps*RjbIntegrand_a2, dx=d_eps) - Rjb_avg**2
+
+    return Rrup_var, Rrup_avg, Rjb_var, Rjb_avg
