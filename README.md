@@ -60,8 +60,8 @@ in magnitude and logarithmic in distance. The ratios are Rjb (or Rrup) to Repi.
 Program Details
 ---------------
 
-`run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. Example 
-config file "test_Rjb.ini". The parameters in the config file are:
+`run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. The 
+parameters in the config file are:
 
 - `NP` The number of processors (cores) to use. Minimum 1.
 
