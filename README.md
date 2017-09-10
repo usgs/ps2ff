@@ -60,13 +60,13 @@ in magnitude and logarithmic in distance. The ratios are Rjb (or Rrup) to Repi.
 Program Details
 ---------------
 
-`run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. Example config
-file "test_Rjb.ini". The parameters in the config file are:
+`run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. Example 
+config file "test_Rjb.ini". The parameters in the config file are:
 
 - `NP` The number of processors (cores) to use. Minimum 1.
 
 - `datadir` - The directory into which the output files are written. If
-  unspecified, it uses "./data".
+  unspecified, it uses `./data`.
 
 - `rup_dim_model` String to select the magnitude scaling relationship.
   Currently supported values are:
@@ -76,7 +76,7 @@ file "test_Rjb.ini". The parameters in the config file are:
 
 - `mech` The rupture mechanism, only used by some scaling relationships:
 
-  - 'A' for all/unknown mechanisms)
+  - 'A' for all/unknown mechanisms,
   - 'SS' for strike-slip,
   - 'N' for normal,
   - 'R' for reverse.
@@ -134,5 +134,5 @@ ratios and variances as a function of backazimuth for a particular earthquake
 magnitude and hypocentral depth. Example config file "test_single.ini".
 
 The parameters are the same as for `run_ps2ff`, with the addition of:
- - `M` The earthquake magnitude.
- - `zhyp` The hypocentral depth of the earthquake.
+- `M` The earthquake magnitude.
+- `zhyp` The hypocentral depth of the earthquake.
