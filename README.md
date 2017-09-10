@@ -63,70 +63,70 @@ Program Details
 `run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. Example config
 file "test_Rjb.ini". The parameters in the config file are:
 
- - `NP` The number of processors (cores) to use. Minimum 1.
+- `NP` The number of processors (cores) to use. Minimum 1.
 
- - `datadir` - The directory into which the output files are written. If
-   unspecified, it uses "./data".
+- `datadir` - The directory into which the output files are written. If
+  unspecified, it uses "./data".
 
- - `rup_dim_model` String to select the magnitude scaling relationship.
-   Currently supported values are:
+- `rup_dim_model` String to select the magnitude scaling relationship.
+  Currently supported values are:
 
-        - 'WC94' for Wells and Coppersmith (1994),
-        - 'S14' for Somerville (2014).
+  - 'WC94' for Wells and Coppersmith (1994),
+  - 'S14' for Somerville (2014).
 
- - `mech` The rupture mechanism, only used by some scaling relationships:
+- `mech` The rupture mechanism, only used by some scaling relationships:
 
-        - 'A' for all/unknown mechanisms)
-        - 'SS' for strike-slip,
-	- 'N' for normal,
-	- 'R' for reverse.
+  - 'A' for all/unknown mechanisms)
+  - 'SS' for strike-slip,
+  - 'N' for normal,
+  - 'R' for reverse.
 
- - `LW` Boolean for whether to separately select rupture length and width
-   distributions, otherwise select the rupture area and compute length and
-   width from it and an assumed aspect ratio. 
+- `LW` Boolean for whether to separately select rupture length and width
+  distributions, otherwise select the rupture area and compute length and
+  width from it and an assumed aspect ratio. 
 
- - `AR` Aspect ratio (Length/Width) of the rupture. The aspect ratio is
-   maintained until the rupture width spans the seismogenic zone, after
-   which only the rupture length will increase.
+- `AR` Aspect ratio (Length/Width) of the rupture. The aspect ratio is
+  maintained until the rupture width spans the seismogenic zone, after
+  which only the rupture length will increase.
 
- - `min_seis_depth` The minimum seismogenic depth (km).
+- `min_seis_depth` The minimum seismogenic depth (km).
 
- - `max_seis_depth` The maximum seismogenic depth (km).
+- `max_seis_depth` The maximum seismogenic depth (km).
 
- - `mindip_deg` The minimum rupture dip in degrees (0 min, 90 max).
+- `mindip_deg` The minimum rupture dip in degrees (0 min, 90 max).
 
- - `maxdip_deg` The maximum rupture dip in degrees (0 min 90 max).
+- `maxdip_deg` The maximum rupture dip in degrees (0 min 90 max).
 
- - `ndip` The number of integration steps in dip.
+- `ndip` The number of integration steps in dip.
 
- - `ntheta` The number of integration steps in theta.
+- `ntheta` The number of integration steps in theta.
 
- - `nxny` The number of integration steps in x and y (minimum is 2).
+- `nxny` The number of integration steps in x and y (minimum is 2).
 
- - `trunc` For the integration in area (or length and width), this is the 
-   truncation of the normal distribution (in standard deviation units).
+- `trunc` For the integration in area (or length and width), this is the 
+  truncation of the normal distribution (in standard deviation units).
 
- - `neps` The number of integration steps for area (or length and width)
-   from -trunc to +trunc. Larger numbers increase the accuracy of the result,
-   but take longer to run.
+- `neps` The number of integration steps for area (or length and width)
+  from -trunc to +trunc. Larger numbers increase the accuracy of the result,
+  but take longer to run.
 
- - `minmag` The minimum magnitude for which to compute results.
+- `minmag` The minimum magnitude for which to compute results.
 
- - `maxmag` The maximum magnitude for which to compute results.
+- `maxmag` The maximum magnitude for which to compute results.
 
- - `dmag` The size of the steps from minmag to maxmag.
+- `dmag` The size of the steps from minmag to maxmag.
 
- - `minepi` The minimum epicentral distance for which to compute results.
+- `minepi` The minimum epicentral distance for which to compute results.
 
- - `maxepi` - The maximum epicentral distance for which to compute results.
+- `maxepi` - The maximum epicentral distance for which to compute results.
 
- - `nepi` The number of steps from minepi to max epi. The steps will be 
-    uniformly sized in log space.
+- `nepi` The number of steps from minepi to max epi. The steps will be 
+   uniformly sized in log space.
 
- - `nz` The number of integration steps in depth for Ztor. For any given
-   rupture width and dip in the integration, Ztor ranges from 
-   `(max_seis_depth - width * sin(dip))` to `min_seis_depth`. Only used for
-   if `what='Rrup'`. 
+- `nz` The number of integration steps in depth for Ztor. For any given
+  rupture width and dip in the integration, Ztor ranges from 
+  `(max_seis_depth - width * sin(dip))` to `min_seis_depth`. Only used for
+  if `what='Rrup'`. 
 
 
 `RrupRjbMeanVar_SingleEvent.py` roduces tables of Repi-to-Rrup and Repi-to-Rjb
