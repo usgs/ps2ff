@@ -73,7 +73,7 @@ parameters in the config file are:
 
   - 'WC94' - Wells, D. L., & Coppersmith, K. J. (1994). New empirical 
     relationships among magnitude, rupture length, rupture width, rupture area,
-    and surface displacement. *Bulletin of the seismological Society of 
+    and surface displacement. *Bulletin of the Seismological Society of 
     America*, 84(4), 974-1002.
   - 'S14' - Somerville, P. (2014). Scaling Relations between Seismic Moment and 
     Rupture Area of Earthquakes in Stable Continental Regions, *PEER Report*
@@ -142,12 +142,14 @@ parameters in the config file are:
   if `what='Rrup'`. 
 
 
-`RrupRjbMeanVar_SingleEvent.py` roduces tables of Repi-to-Rrup and Repi-to-Rjb
-ratios and variances as a function of backazimuth for a particular earthquake
-magnitude and hypocentral depth. An example configuration file for this program is
-given in
+`run_ps2ff_single_event` produces tables of Repi-to-Rrup and Repi-to-Rjb
+ratios and variances for a single event. This means that the magnitdue and
+hypocentral depth are available, simplifying the integration. It optionally 
+tabulates the adjustment factors as a function of backazimuth. An example 
+configuration file for this program is given in
 `tests/config/test_single.ini`.
 
 The parameters are the same as for `run_ps2ff`, with the addition of:
 - `M` The earthquake magnitude.
 - `zhyp` The hypocentral depth of the earthquake.
+- `bytheta` Tabulate factors for bins of theta.
