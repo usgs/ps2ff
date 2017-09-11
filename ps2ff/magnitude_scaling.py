@@ -46,38 +46,34 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
             sig_width = 0.14
             width = 10**(-0.76 + 0.27 * M + sig_width * epsmid)
             sig_area = 0.22
-            area = np.power(10, -3.42 + 0.90*M +
-                            sig_area * epsmid)
+            area = 10**(-3.42 + 0.90*M + sig_area * epsmid)
         if mech == "R":
             sig_length = 0.16
             length = 10**(-2.42 + 0.58 * M + sig_length * epsmid)
             sig_width = 0.15
             width = 10**(-1.61 + 0.41 * M + sig_width * epsmid)
             sig_area = 0.26
-            area = np.power(10, -3.99 + 0.98*M +
-                            sig_area * epsmid)
+            area = 10**(-3.99 + 0.98*M + sig_area * epsmid)
         if mech == "N":
             sig_length = 0.17
             length = 10**(-1.88 + 0.50 * M) + sig_length * epsmid
             sig_width = 0.12
             width = 10**(-1.14 + 0.35 * M + sig_width * epsmid)
             sig_area = 0.22
-            area = np.power(10, -2.78 + 0.82*M +
-                            sig_area * epsmid)
+            area = 10**(-2.78 + 0.82*M + sig_area * epsmid)
         if mech == "A":
             sig_length = 0.16
             length = 10**(-2.44 + 0.59 * M + sig_length * epsmid)
             sig_width = 0.15
             width = 10**(-1.01 + 0.32 * M + sig_width * epsmid)
             sig_area = 0.24
-            area = np.power(10, -3.49 + 0.91*M +
-                            sig_area * epsmid)
+            area = 10**(-3.49 + 0.91*M + sig_area * epsmid)
     elif rup_dim_model == 'S14':
         # Somerville (2014) model:
         #     - No length or width
         #     - No mechanism dependence
         sig_area = 0.3
-        area = np.power(10, M - 4.25 + sig_area * epsmid)
+        area = 10**(M - 4.25 + sig_area * epsmid)
         length = None
         sig_length = None
         width = None
@@ -111,14 +107,30 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
         #     0.212*3/4 = 0.159 (seems a bit low...)
         if M > 6.71:
             sig_area = 0.236
-            area = np.power(10, 3/4*(M - 3.07) + sig_area * epsmid)
+            area = 10**(3/4*(M - 3.07) + sig_area * epsmid)
         else:
             sig_area = 0.159
-            area = np.power(10, (M - 3.98) + sig_area * epsmid)
+            area = 10**((M - 3.98) + sig_area * epsmid)
         length = None
         sig_length = None
         width = None
         sig_width = None
+    elif rup_dim_model == 'Sea10_interface':
+        # Strasset et al. (2010), coefficients for interface events
+        sig_length = 0.18
+        length = 10**(-2.477 + 0.585 * M + sig_length * epsmid)
+        sig_width = 0.173
+        width = 10**(-0.882 + 0.351 * M + sig_width * epsmid)
+        sig_area = 0.304
+        area = 10**(-3.49 + 0.952*M + sig_area * epsmid)
+    elif rup_dim_model == 'Sea10_slab':
+        # Strasset et al. (2010), coefficients for slab events
+        sig_length = 0.146
+        length = 10**(-2.35 + 0.562 * M + sig_length * epsmid)
+        sig_width = 0.067
+        width = 10**(-1.058 + 0.356 * M + sig_width * epsmid)
+        sig_area = 0.184
+        area = 10**(-3.225 + 0.89*M + sig_area * epsmid)
     else:
         raise Exception('Unsupported value of \'rup_dim_model\'')
     return length, sig_length, width, sig_width, area, sig_area
