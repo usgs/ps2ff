@@ -1,0 +1,9 @@
+# Program: /Users/emthompson/miniconda3/envs/ps2ff/bin/run_ps2ff
+# Config file: tests/config/fast_rrup_Sea10_interface.ini
+# Process start: 2017-09-11T10:44:12.678558
+# Process finish: 2017-09-11T10:44:12.873673
+# rup_dim_model = Sea10_interface, mech = A, LW = False, AR = 1.0, ndip = 3, mindip = 0.000000, maxdip = 1.570796, ntheta = 4, nxny = 3
+# neps = 3, trunc = 2.500000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
+"Repi_km","V6.5","V7","V7.5"
+10.000000,25.903665,29.497454,29.497454
+100.000000,153.790645,453.906611,751.966242

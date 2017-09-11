@@ -37,6 +37,8 @@ def mag_dist_loop(what, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         mech (str): Optional string indicating earthquake mechanism, used by
             some of the models. Anything other than 'R', 'N', 'SS', or 'A'
             (the default).
@@ -135,6 +137,8 @@ def single_event_loop(ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         mech (str): Optional string indicating earthquake mechanism, used by
             some of the models. Anything other than 'R', 'N', 'SS', or 'A'
             (the default).
@@ -277,6 +281,8 @@ def rjb_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         mech (str): Optional string indicating earthquake mechanism, used by
             some of the models. Anything other than 'R', 'N', 'SS', or 'A'
             (the default).
@@ -512,6 +518,8 @@ def rrup_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         mech (str): Optional string indicating earthquake mechanism, used by
             some of the models. Anything other than 'R', 'N', 'SS', or 'A'
             (the default).
@@ -799,6 +807,8 @@ def single_event_inner_loop(M, Repi, ndip=19, mindip=0.0, maxdip=np.pi/2.0,
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         mech (str): Optional string indicating earthquake mechanism, used by
             some of the models. Anything other than 'R', 'N', 'SS', or 'A'
             (the default).
