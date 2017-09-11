@@ -16,6 +16,8 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
                 - 'WC94'
                 - 'S14'
                 - 'HB08'
+                - 'Sea10_interface'
+                - 'Sea10_slab'
         neps (int): The number of steps to integrate from -trunc to +trunc.
             Larger numbers increase the accuracy of the result, but take
             longer to run.

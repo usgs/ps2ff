@@ -71,9 +71,19 @@ parameters in the config file are:
 - `rup_dim_model` String to select the magnitude scaling relationship.
   Currently supported values are:
 
-  - 'WC94' for Wells and Coppersmith (1994),
-  - 'S14' for Somerville (2014), and
-  - 'HB08' for Hanks and Bakun (2008).
+  - 'WC94' - Wells, D. L., & Coppersmith, K. J. (1994). New empirical relationships 
+    among magnitude, rupture length, rupture width, rupture area, and surface 
+    displacement. Bulletin of the seismological Society of America, 84(4), 974-1002.
+    Magnitude, Rupture Length, Rupture Width, Rupture Area, and Surface Displacement
+  - 'S14' - Somerville, P. (2014). Scaling Relations between Seismic Moment and 
+    Rupture Area of Earthquakes in Stable Continental Regions, PEER Report 2014/14.
+  - 'HB08' - Hanks, T.C. and Bakun, W.H., 2008. M-logA observations for recent large 
+    earthquakes. Bulletin of the Seismological Society of America, 98(1), pp.490-494.
+  - 'Sea10_interface' - Interface coefficients of Strasser, F. O., Arango, M. C., & 
+    Bommer, J. J. (2010). Scaling of the source dimensions of interface and intraslab 
+    subduction-zone earthquakes with moment magnitude. Seismological Research Letters, 
+    81(6), 941-950.
+  - 'Sea10_slab' - Slab coefficients from the paper in previous bullet.
 
 - `mech` The rupture mechanism, only used by some scaling relationships:
 
