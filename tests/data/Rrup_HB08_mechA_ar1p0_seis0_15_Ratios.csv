@@ -1,0 +1,9 @@
+# Program: /Users/emthompson/miniconda3/envs/ps2ff/bin/run_ps2ff
+# Config file: tests/config/fast_rrup_HB08.ini
+# Process start: 2017-09-11T09:40:17.606878
+# Process finish: 2017-09-11T09:40:17.796200
+# rup_dim_model = HB08, mech = A, LW = False, AR = 1.0, ndip = 3, mindip = 0.000000, maxdip = 1.570796, ntheta = 4, nxny = 3
+# neps = 3, trunc = 2.500000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
+"Repi_km","R6.5","R7","R7.5"
+10.000000,0.876586,0.759578,0.759943
+100.000000,0.900777,0.817803,0.725093

@@ -22,15 +22,15 @@ source activate ps2ff
 
 Running the Programs
 --------------------
-The primary program is `run_ps2ff`, which takes only one argument
+The primary program is `run_ps2ff`, which must be handed a configuraiton file
 ```
 ps2ff config_file.ini
 ```
-There are example config files in `<repository>/config`. 
+There are example configuration files in the `config` directory. 
 
 Output Tables
 -------------
-The 'tables' directory contains example results for some generic seismological
+The `tables` directory contains example results for some generic seismological
 assumptions. The output file name convension is easiest to describe with an
 example:
 ```
@@ -48,7 +48,7 @@ where:
  - "Ratios" is either "Ratios" or "Var" specifying whether the file contains
    Repi to Rjb (or Rrup) ratios or variances.
 
-Each output table starts with six header lines (each beginning with "#")
+Each output table starts with six header lines (each beginning with `#`)
 specifying the processing parameters. This is followed by a line
 (comma-separated) providing the column headers. The first column, "Repi_km",
 is the epicentral distance. The following columns R(magnitude) ("R" for
@@ -72,7 +72,8 @@ parameters in the config file are:
   Currently supported values are:
 
   - 'WC94' for Wells and Coppersmith (1994),
-  - 'S14' for Somerville (2014).
+  - 'S14' for Somerville (2014), and
+  - 'HB08' for Hanks and Bakun (2008).
 
 - `mech` The rupture mechanism, only used by some scaling relationships:
 
@@ -131,8 +132,9 @@ parameters in the config file are:
 
 `RrupRjbMeanVar_SingleEvent.py` roduces tables of Repi-to-Rrup and Repi-to-Rjb
 ratios and variances as a function of backazimuth for a particular earthquake
-magnitude and hypocentral depth. Example config file is 
-`<repository>/tests/config/test_single.ini`.
+magnitude and hypocentral depth. An example configuration file for this program is
+given in
+`tests/config/test_single.ini`.
 
 The parameters are the same as for `run_ps2ff`, with the addition of:
 - `M` The earthquake magnitude.

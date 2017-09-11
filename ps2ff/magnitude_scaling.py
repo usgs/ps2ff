@@ -82,6 +82,43 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
         sig_length = None
         width = None
         sig_width = None
+    elif rup_dim_model == 'HB08':
+        # Hanks and Bakun (2008)
+        # These are the equations reported in the paper:
+        #     M =       log10(A) + 3.98   for A <= 537 km^2 w/ se=0.03
+        #     M = 4/3 * log10(A) + 3.07   for A >  537 km^2 w/ se=0.04
+        # Using them is not so straight-forward beacuse we need to compute
+        # the area from magnitude. Of course, this gives a different result
+        # than if the equations were regressed for A as a function of M,
+        # although since the equations were derived theoretically, this may
+        # not be so bad.
+        #
+        # The inverted equation is simple enough:
+        #     log10(A) =      M - 3.98    for M <= 6.71
+        #     log10(A) = 3/4*(M - 3.07))  for M > 6.71
+        #
+        # The standard deviations are a little trickier.
+        # First, convert standard errors of M to standard deviations of M:
+        # (by my count, n=62 for A<=537, and n=28 for A>537)
+        #     0.03*sqrt(62) = 0.236       for M <= 6.71
+        #     0.04*sqrt(28) = 0.212       for M > 6.71
+        # And convert to standard deviations of log(A) using the partial
+        # derivatives
+        #     dM/d(log10(A)) = 1          for M <= 6.71
+        #     dM/d(log10(A)) = 3/4        for M >  6.71
+        # So
+        #     0.236*1   = 0.236 (pretty close to WC94)
+        #     0.212*3/4 = 0.159 (seems a bit low...)
+        if M > 6.71:
+            sig_area = 0.236
+            area = np.power(10, 3/4*(M - 3.07) + sig_area * epsmid)
+        else:
+            sig_area = 0.159
+            area = np.power(10, (M - 3.98) + sig_area * epsmid)
+        length = None
+        sig_length = None
+        width = None
+        sig_width = None
     else:
         raise Exception('Unsupported value of \'rup_dim_model\'')
     return length, sig_length, width, sig_width, area, sig_area
