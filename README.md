@@ -10,9 +10,10 @@ distance) or Rrup (closest distance to rupture).
 
 Prerequisites and Installation
 ------------------------------
-These programs run in either Pything 2.7 or 3.5, and require a number of
-packages. The dependency list is given in `install.sh`. The easiest way to
-install this code is to run `install.sh` in OSX or Linux. It will install
+These programs run in either Python 2.7 or 3.5, and require a number of
+packages, including the [conda](https://conda.io/docs/) package manager.
+The dependency list is given in `install.sh`. The easiest way to install
+this code is to run `install.sh` in OSX or Linux. It will install
 miniconda (if a version of `conda` is not already installed) and then all
 the dependencies in a virtual environment named `ps2ff`. To use this
 environment after installation, type
@@ -46,7 +47,7 @@ where:
  - "seis0_15" is the range min/max seismogenic depths (in this case 0 to 15
    km).
  - "Ratios" is either "Ratios" or "Var" specifying whether the file contains
-   Repi to Rjb (or Rrup) ratios or variances.
+   Rjb- or Rrup-to-Repi ratios, or variances.
 
 Each output table starts with six header lines (each beginning with `#`)
 specifying the processing parameters. This is followed by a line
@@ -73,17 +74,17 @@ parameters in the config file are:
 
   - 'WC94' - Wells, D. L., & Coppersmith, K. J. (1994). New empirical 
     relationships among magnitude, rupture length, rupture width, rupture area,
-    and surface displacement. *Bulletin of the Seismological Society of 
+    and surface displacement, *Bulletin of the Seismological Society of 
     America*, 84(4), 974-1002.
   - 'S14' - Somerville, P. (2014). Scaling Relations between Seismic Moment and 
     Rupture Area of Earthquakes in Stable Continental Regions, *PEER Report*
     2014/14.
-  - 'HB08' - Hanks, T.C. and Bakun, W.H., 2008. M-logA observations for recent
-    large earthquakes. *Bulletin of the Seismological Society of America*, 
-    98(1), pp.490-494.
+  - 'HB08' - Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for 
+    recent large earthquakes, *Bulletin of the Seismological Society of 
+    America*, 98(1), 490-494.
   - 'Sea10_interface' - Interface coefficients of Strasser, F. O., Arango, 
     M. C., & Bommer, J. J. (2010). Scaling of the source dimensions of 
-    interface and intraslab subduction-zone earthquakes with moment magnitude.
+    interface and intraslab subduction-zone earthquakes with moment magnitude,
     *Seismological Research Letters*, 81(6), 941-950.
   - 'Sea10_slab' - Slab coefficients from the paper in previous bullet.
 

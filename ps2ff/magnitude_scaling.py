@@ -118,7 +118,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
         width = None
         sig_width = None
     elif rup_dim_model == 'Sea10_interface':
-        # Strasset et al. (2010), coefficients for interface events
+        # Strasser et al. (2010), coefficients for interface events
         sig_length = 0.18
         length = 10**(-2.477 + 0.585 * M + sig_length * epsmid)
         sig_width = 0.173
@@ -126,7 +126,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc, mech='A'):
         sig_area = 0.304
         area = 10**(-3.49 + 0.952*M + sig_area * epsmid)
     elif rup_dim_model == 'Sea10_slab':
-        # Strasset et al. (2010), coefficients for slab events
+        # Strasser et al. (2010), coefficients for slab events
         sig_length = 0.146
         length = 10**(-2.35 + 0.562 * M + sig_length * epsmid)
         sig_width = 0.067
