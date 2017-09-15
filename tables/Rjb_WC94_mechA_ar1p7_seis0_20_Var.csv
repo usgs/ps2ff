@@ -1,7 +1,7 @@
-# Program: /data/emthompson/DistanceConversion/RjbMeanVar.py
-# Config file: /home/emthompson/ps2ff/config/Rjb_WC94_mechA_ar1p7_seis0-20.ini
-# Process start: 2017-06-06T12:44:00.070543
-# Process finish: 2017-06-06T13:07:21.029793
+# Program: /home/emthompson/anaconda3/envs/ps2ff/bin/run_ps2ff
+# Config file: figure3_top.ini
+# Process start: 2017-09-11T15:13:07.402313
+# Process finish: 2017-09-11T15:43:38.677886
 # rup_dim_model = WC94, mech = A, LW = False, AR = 1.7, ndip = 17, mindip = 0.174533, maxdip = 1.570796, ntheta = 73, nxny = 50
 # neps = 7, trunc = 3.000000, min_seis_depth = 0.000000, max_seis_depth = 20.000000
 "Repi_km","V4","V4.25","V4.5","V4.75","V5","V5.25","V5.5","V5.75","V6","V6.25","V6.5","V6.75","V7","V7.25","V7.5","V7.75","V8","V8.25","V8.5","V8.75","V9"
