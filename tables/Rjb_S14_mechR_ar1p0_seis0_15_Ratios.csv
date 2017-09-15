@@ -1,8 +1,8 @@
-# Program: /home/emthompson/DistanceConversion/RjbMeanVar.py
-# Config file: Rjb_S14_mechR_ar1p0_seis0-15.ini
-# Process start: 2015-11-04T09:22:15.333137
-# Process finish: 2015-11-04T09:39:26.019190
-# rup_dim_model = S14, mech = R, LW = False, AR = 1.0, ndip = 7, mindip = 0.523599, maxdip = 1.047198, ntheta = 73, maxnx = 50
+# Program: /home/emthompson/anaconda3/envs/ps2ff/bin/run_ps2ff
+# Config file: figure3_bot.ini
+# Process start: 2017-09-11T15:53:44.790861
+# Process finish: 2017-09-11T16:06:54.041384
+# rup_dim_model = S14, mech = R, LW = False, AR = 1.0, ndip = 7, mindip = 0.523599, maxdip = 1.047198, ntheta = 73, nxny = 50
 # neps = 7, trunc = 3.000000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
 "Repi_km","R4","R4.25","R4.5","R4.75","R5","R5.25","R5.5","R5.75","R6","R6.25","R6.5","R6.75","R7","R7.25","R7.5","R7.75","R8","R8.25","R8.5","R8.75","R9"
 0.100000,0.086144,0.065143,0.049364,0.037576,0.028843,0.022488,0.018048,0.015239,0.013756,0.013156,0.012987,0.012958,0.012956,0.012956,0.012956,0.012956,0.012956,0.012956,0.012956,0.012956,0.012956
