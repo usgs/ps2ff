@@ -52,8 +52,8 @@ where:
 Each output table starts with six header lines (each beginning with `#`)
 specifying the processing parameters. This is followed by a line
 (comma-separated) providing the column headers. The first column, "Repi_km",
-is the epicentral distance. The following columns R(magnitude) ("R" for
-"ratio") or V(magnitude) ("V" for "variance) provide the values for a given
+is the epicentral distance. The following columns "R(magnitude)" ("R" for
+"ratio") or "V(magnitude)" ("V" for "variance) provide the values for a given
 Repi and magnitude. The table is intended for bi-variate interpolation, linear
 in magnitude and logarithmic in distance. The ratios are Rjb (or Rrup) to Repi.
 
@@ -61,8 +61,8 @@ in magnitude and logarithmic in distance. The ratios are Rjb (or Rrup) to Repi.
 Program Details
 ---------------
 
-`run_ps2ff` produces tables of Repi-to-Rjb ratios and variances. The 
-parameters in the config file are:
+`run_ps2ff` produces tables of Rjb-to-Repi or Rrup-to-Repi ratios and 
+variances. The parameters in the config file are:
 
 - `NP` The number of processors (cores) to use. Minimum 1.
 
@@ -143,7 +143,7 @@ parameters in the config file are:
   if `what='Rrup'`. 
 
 
-`run_ps2ff_single_event` produces tables of Repi-to-Rrup and Repi-to-Rjb
+`run_ps2ff_single_event` produces tables of Rrup-to-Repi and Rjb-to-Repi
 ratios and variances for a single event. This means that the magnitdue and
 hypocentral depth are available, simplifying the integration. It optionally 
 tabulates the adjustment factors as a function of backazimuth. An example 
