@@ -64,29 +64,32 @@ Program Details
 `run_ps2ff` produces tables of Rjb-to-Repi or Rrup-to-Repi ratios and 
 variances. The parameters in the config file are:
 
-- `NP`: The number of processors (cores) to use. Minimum 1.
+NP
+:   The number of processors (cores) to use. Minimum 1.
 
-- `datadir`: The directory into which the output files are written. If
-  unspecified, it uses `./data`.
+datadir
+:   The directory into which the output files are written. If
+    unspecified, it uses `./data`.
 
-- `rup_dim_model`: String to select the magnitude scaling relationship.
-  Currently supported values are:
+rup_dim_model
+:   String to select the magnitude scaling relationship.
+    Currently supported values are:
 
-  - WC94: Wells, D. L., & Coppersmith, K. J. (1994). New empirical 
-    relationships among magnitude, rupture length, rupture width, rupture area,
-    and surface displacement, *Bulletin of the Seismological Society of 
-    America*, 84(4), 974-1002.
-  - S14: Somerville, P. (2014). Scaling Relations between Seismic Moment and 
-    Rupture Area of Earthquakes in Stable Continental Regions, *PEER Report*
-    2014/14.
-  - HB08: Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for 
-    recent large earthquakes, *Bulletin of the Seismological Society of 
-    America*, 98(1), 490-494.
-  - Sea10_interface: Interface coefficients of Strasser, F. O., Arango, 
-    M. C., & Bommer, J. J. (2010). Scaling of the source dimensions of 
-    interface and intraslab subduction-zone earthquakes with moment magnitude,
-    *Seismological Research Letters*, 81(6), 941-950.
-  - Sea10_slab: Slab coefficients from the paper in previous bullet.
+      - WC94: Wells, D. L., & Coppersmith, K. J. (1994). New empirical 
+        relationships among magnitude, rupture length, rupture width, rupture area,
+        and surface displacement, *Bulletin of the Seismological Society of 
+        America*, 84(4), 974-1002.
+      - S14: Somerville, P. (2014). Scaling Relations between Seismic Moment and 
+        Rupture Area of Earthquakes in Stable Continental Regions, *PEER Report*
+        2014/14.
+      - HB08: Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for 
+        recent large earthquakes, *Bulletin of the Seismological Society of 
+        America*, 98(1), 490-494.
+      - Sea10_interface: Interface coefficients of Strasser, F. O., Arango, 
+        M. C., & Bommer, J. J. (2010). Scaling of the source dimensions of 
+        interface and intraslab subduction-zone earthquakes with moment magnitude,
+        *Seismological Research Letters*, 81(6), 941-950.
+      - Sea10_slab: Slab coefficients from the paper in previous bullet.
 
 - `mech` The rupture mechanism, only used by some scaling relationships:
 
