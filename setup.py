@@ -9,8 +9,9 @@ setup(name='ps2ff',
       url='http://github.com/usgs/shakelib',
       packages=['ps2ff'],
       package_data={'ps2ff': [os.path.join('tables', '*')]},
-      scripts=['run_ps2ff', 'run_ps2ff_single_event',
-               'Cy14HwMeanVar.py', 'HwMeanVar.py'],
+      scripts=[os.path.join('bin', 'run_ps2ff'), 
+               os.path.join('bin', 'run_ps2ff_single_event'),
+               os.path.join('bin', 'Cy14HwMeanVar.py')],
       )
 
 

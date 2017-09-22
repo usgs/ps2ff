@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+#
+# NOTICE: This is experimental and incomplete code that is not part 
+# of the reviewed and documented product found in this repository. 
+# It is currently under development and is not fit to be used for 
+# any purpose.
+#
+
 from __future__ import division
 from __future__ import print_function
 

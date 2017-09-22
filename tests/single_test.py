@@ -5,7 +5,7 @@ from impactutils.io.cmd import get_command_output
 
 
 def test_single():
-    cmd = "run_ps2ff_single_event tests/config/test_single.ini"
+    cmd = "bin/run_ps2ff_single_event tests/config/test_single.ini"
     rc, so, se = get_command_output(cmd)
 
     rjb1 = pd.DataFrame.from_csv(
@@ -44,7 +44,7 @@ def test_single():
 
 
 def test_single_by_theta_false():
-    cmd = "run_ps2ff_single_event tests/config/test_single_by_theta_false.ini"
+    cmd = "bin/run_ps2ff_single_event tests/config/test_single_by_theta_false.ini"
     rc, so, se = get_command_output(cmd)
 
     rjb1 = pd.DataFrame.from_csv(
@@ -83,7 +83,7 @@ def test_single_by_theta_false():
 
 
 def test_single_N1():
-    cmd = "run_ps2ff_single_event tests/config/test_single_N1.ini"
+    cmd = "bin/run_ps2ff_single_event tests/config/test_single_N1.ini"
     rc, so, se = get_command_output(cmd)
 
     rjb1 = pd.DataFrame.from_csv(
