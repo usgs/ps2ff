@@ -20,29 +20,7 @@ def mag_dist_loop(conf, iP=None, filename=None, M=None, Repi=None):
     and writes out progress information.
 
     Args:
-        conf : The configuration info. It contains the following elements:
-            what (DistType enum): Specifies the distance measure to
-                integrate.
-            ndip (int): Number of integration steps for dip.
-            mindip (float): The minimum rupture dip in degrees (0 to 90).
-            maxdip (float): The maximum rupture dip in degrees (0 to 90).
-            min_seis_depth (float): The minimum seismogenic depth (km).
-            max_seis_depth (float): The maximum seismogenic depth (km).
-            rup_dim_model (MagScaling enum): Specifies the model for
-                compputing the rupture dimensions from magnitude.
-            mech (Mechanism enum): Specifies earthquake mechanism, used by
-                some of the models.
-            LW (bool): Compute length and width from magnitude, and integrate
-                across them individually. Alternative is to assume an aspect
-                ratio.
-            AR (float): Aspect ratio (length/width).
-            ntheta (int): Number of integration steps for theta.
-            nxny (int): Number of integration steps in the x and y direction.
-            neps (int): Number of integration steps for epsilon.
-            trunc (float): Epsilon truncation level.
-            NP (int): Number of forked processes.
-            nz (int): Number of integration steps in depth. Only used
-                for Rrup calculations.
+        conf: The configuration info. See `ps2ff/data/configspec.conf`.
         iP (int): Multiple process index.
         filename (str): Output file name.
         M (numpy.ndarray): Earthquake magnitudes.

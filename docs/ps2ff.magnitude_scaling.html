@@ -45,20 +45,23 @@
 <dt id="ps2ff.magnitude_scaling.compute_epsilon">
 <code class="descclassname">ps2ff.magnitude_scaling.</code><code class="descname">compute_epsilon</code><span class="sig-paren">(</span><em>neps</em>, <em>trunc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/magnitude_scaling.html#compute_epsilon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.magnitude_scaling.compute_epsilon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute midpoints and probabilities of epsilon bins.
-Args:</p>
+:param neps: The number of steps to integrate from -trunc to +trunc.</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>neps (int): The number of steps to integrate from -trunc to +trunc.</dt>
-<dd>Larger numbers increase the accuracy of the result, but take
-longer to run.</dd>
-<dt>trunc (float): For the integration in area (or length and width), trunc</dt>
-<dd>is the truncation of the normal distribution (in units of sigma).</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>tuple: epsilon midpoints, their probabilities, bin width.</dd>
-</dl>
+<div>Larger numbers increase the accuracy of the result, but take
+longer to run.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trunc</strong> (<em>float</em>) – For the integration in area (or length and width), trunc
+is the truncation of the normal distribution (in units of sigma).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">epsilon midpoints, their probabilities, bin width.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -66,25 +69,26 @@ longer to run.</dd>
 <code class="descclassname">ps2ff.magnitude_scaling.</code><code class="descname">dimensions_from_magnitude</code><span class="sig-paren">(</span><em>M</em>, <em>rup_dim_model</em>, <em>neps</em>, <em>trunc</em>, <em>mech=&lt;Mechanism.A: 'A'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/magnitude_scaling.html#dimensions_from_magnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.magnitude_scaling.dimensions_from_magnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute dimensions of rupture from magnitude for a specified
 magnitude scaling relation.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">M (float): Magnitude.
-rup_dim_model (MagScaling enum): Specifies the model for compputing the</p>
-<blockquote>
-<div>rupture dimensions from magnitude.</div></blockquote>
-<dl class="last docutils">
-<dt>neps (int): The number of steps to integrate from -trunc to +trunc.</dt>
-<dd>Larger numbers increase the accuracy of the result, but take
-longer to run.</dd>
-<dt>trunc (float): For the integration in area (or length and width), trunc</dt>
-<dd>is the truncation of the normal distribution (in units of sigma).</dd>
-<dt>mech (Mechanism enum): Optional string indicating earthquake</dt>
-<dd>mechanism, used by some of the models.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>tuple: A tuple containing the following, noting that some of these will</dt>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>M</strong> (<em>float</em>) – Magnitude.</li>
+<li><strong>rup_dim_model</strong> (<em>MagScaling enum</em>) – Specifies the model for compputing the
+rupture dimensions from magnitude.</li>
+<li><strong>neps</strong> (<em>int</em>) – The number of steps to integrate from -trunc to +trunc.
+Larger numbers increase the accuracy of the result, but take
+longer to run.</li>
+<li><strong>trunc</strong> (<em>float</em>) – For the integration in area (or length and width), trunc
+is the truncation of the normal distribution (in units of sigma).</li>
+<li><strong>mech</strong> (<em>Mechanism enum</em>) – Optional string indicating earthquake
+mechanism, used by some of the models.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A tuple containing the following, noting that some of these will</dt>
 <dd><dl class="first last docutils">
 <dt>be empty if the selected model does not provide them:</dt>
 <dd><ul class="first last simple">
@@ -99,8 +103,14 @@ longer to run.</dd>
 </dl>
 </dd>
 </dl>
-</dd>
-</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
