@@ -15,7 +15,7 @@ fi
 conda update -q -y conda
 conda config --prepend channels conda-forge
 
-DEPARRAY=(numpy=1.11 scipy=0.19.1 pandas=0.20.3 pytest=3.2.0 pytest-cov=2.5.1)
+DEPARRAY=(numpy=1.11 scipy=0.19.1 pandas=0.20.3 pytest=3.2.0 pytest-cov=2.5.1 configobj=5.0.6)
 
 # Is the Travis flag set?
 travis=0

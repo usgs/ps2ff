@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ps2ff.magnitude_scaling &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ps2ff.magnitude_scaling</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">norm</span>
+
+<span class="kn">from</span> <span class="nn">ps2ff.constants</span> <span class="k">import</span> <span class="n">MagScaling</span><span class="p">,</span> <span class="n">Mechanism</span>
+
+
+<div class="viewcode-block" id="dimensions_from_magnitude"><a class="viewcode-back" href="../../ps2ff.magnitude_scaling.html#ps2ff.magnitude_scaling.dimensions_from_magnitude">[docs]</a><span class="k">def</span> <span class="nf">dimensions_from_magnitude</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">rup_dim_model</span><span class="p">,</span> <span class="n">neps</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span>
+                              <span class="n">mech</span><span class="o">=</span><span class="n">Mechanism</span><span class="o">.</span><span class="n">A</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute dimensions of rupture from magnitude for a specified</span>
+<span class="sd">    magnitude scaling relation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (float): Magnitude.</span>
+<span class="sd">        rup_dim_model (MagScaling enum): Specifies the model for compputing the</span>
+<span class="sd">            rupture dimensions from magnitude.</span>
+<span class="sd">        neps (int): The number of steps to integrate from -trunc to +trunc.</span>
+<span class="sd">            Larger numbers increase the accuracy of the result, but take</span>
+<span class="sd">            longer to run.</span>
+<span class="sd">        trunc (float): For the integration in area (or length and width), trunc</span>
+<span class="sd">            is the truncation of the normal distribution (in units of sigma).</span>
+<span class="sd">        mech (Mechanism enum): Optional string indicating earthquake</span>
+<span class="sd">            mechanism, used by some of the models.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing the following, noting that some of these will</span>
+<span class="sd">            be empty if the selected model does not provide them:</span>
+<span class="sd">                - length: rupture length (km).</span>
+<span class="sd">                - sig_length: standard deviation of rupture length.</span>
+<span class="sd">                - W: rupture width (km).</span>
+<span class="sd">                - sigw: standard devation of rupture width.</span>
+<span class="sd">                - A: rupture area (km).</span>
+<span class="sd">                - siga: standard deivaiton of rupture area.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="n">compute_epsilon</span><span class="p">(</span><span class="n">neps</span><span class="p">,</span> <span class="n">trunc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rup_dim_model</span><span class="p">,</span> <span class="n">MagScaling</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;rup_dim_model must be of type MagScaling&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mech</span><span class="p">,</span> <span class="n">Mechanism</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;mech must be of type Mechanism&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rup_dim_model</span> <span class="ow">is</span> <span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">:</span>
+        <span class="c1"># Use mech to get either M-A or (M-W) and (M-R) from Wells and</span>
+        <span class="c1"># Coppersmith.</span>
+        <span class="k">if</span> <span class="n">mech</span> <span class="ow">is</span> <span class="n">Mechanism</span><span class="o">.</span><span class="n">SS</span><span class="p">:</span>
+            <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.15</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.57</span> <span class="o">+</span> <span class="mf">0.62</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.14</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">0.76</span> <span class="o">+</span> <span class="mf">0.27</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.22</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.42</span> <span class="o">+</span> <span class="mf">0.90</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mech</span> <span class="ow">is</span> <span class="n">Mechanism</span><span class="o">.</span><span class="n">R</span><span class="p">:</span>
+            <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.16</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.42</span> <span class="o">+</span> <span class="mf">0.58</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.15</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.61</span> <span class="o">+</span> <span class="mf">0.41</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.26</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.99</span> <span class="o">+</span> <span class="mf">0.98</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mech</span> <span class="ow">is</span> <span class="n">Mechanism</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+            <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.17</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.88</span> <span class="o">+</span> <span class="mf">0.50</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span>
+            <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.12</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.14</span> <span class="o">+</span> <span class="mf">0.35</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.22</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.78</span> <span class="o">+</span> <span class="mf">0.82</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mech</span> <span class="ow">is</span> <span class="n">Mechanism</span><span class="o">.</span><span class="n">A</span><span class="p">:</span>
+            <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.16</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.44</span> <span class="o">+</span> <span class="mf">0.59</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.15</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.01</span> <span class="o">+</span> <span class="mf">0.32</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.24</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.49</span> <span class="o">+</span> <span class="mf">0.91</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported value of </span><span class="se">\&#39;</span><span class="s1">mech</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">rup_dim_model</span> <span class="ow">is</span> <span class="n">MagScaling</span><span class="o">.</span><span class="n">S14</span><span class="p">:</span>
+        <span class="c1"># Somerville (2014) model:</span>
+        <span class="c1">#     - No length or width</span>
+        <span class="c1">#     - No mechanism dependence</span>
+        <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.3</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mf">4.25</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sig_length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sig_width</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">rup_dim_model</span> <span class="o">==</span> <span class="n">MagScaling</span><span class="o">.</span><span class="n">HB08</span><span class="p">:</span>
+        <span class="c1"># Hanks and Bakun (2008)</span>
+        <span class="c1"># These are the equations reported in the paper:</span>
+        <span class="c1">#     M =       log10(A) + 3.98   for A &lt;= 537 km^2 w/ se=0.03</span>
+        <span class="c1">#     M = 4/3 * log10(A) + 3.07   for A &gt;  537 km^2 w/ se=0.04</span>
+        <span class="c1"># Using them is not so straight-forward beacuse we need to compute</span>
+        <span class="c1"># the area from magnitude. Of course, this gives a different result</span>
+        <span class="c1"># than if the equations were regressed for A as a function of M,</span>
+        <span class="c1"># although since the equations were derived theoretically, this may</span>
+        <span class="c1"># not be so bad.</span>
+        <span class="c1">#</span>
+        <span class="c1"># The inverted equation is simple enough:</span>
+        <span class="c1">#     log10(A) =      M - 3.98    for M &lt;= 6.71</span>
+        <span class="c1">#     log10(A) = 3/4*(M - 3.07))  for M &gt; 6.71</span>
+        <span class="c1">#</span>
+        <span class="c1"># The standard deviations are a little trickier.</span>
+        <span class="c1"># First, convert standard errors of M to standard deviations of M:</span>
+        <span class="c1"># (by my count, n=62 for A&lt;=537, and n=28 for A&gt;537)</span>
+        <span class="c1">#     0.03*sqrt(62) = 0.236       for M &lt;= 6.71</span>
+        <span class="c1">#     0.04*sqrt(28) = 0.212       for M &gt; 6.71</span>
+        <span class="c1"># And convert to standard deviations of log(A) using the partial</span>
+        <span class="c1"># derivatives</span>
+        <span class="c1">#     dM/d(log10(A)) = 1          for M &lt;= 6.71</span>
+        <span class="c1">#     dM/d(log10(A)) = 3/4        for M &gt;  6.71</span>
+        <span class="c1"># So</span>
+        <span class="c1">#     0.236*1   = 0.236 (pretty close to WC94)</span>
+        <span class="c1">#     0.212*3/4 = 0.159 (seems a bit low...)</span>
+        <span class="k">if</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="mf">6.71</span><span class="p">:</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.236</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">M</span> <span class="o">-</span> <span class="mf">3.07</span><span class="p">)</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.159</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">((</span><span class="n">M</span> <span class="o">-</span> <span class="mf">3.98</span><span class="p">)</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sig_length</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">sig_width</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">rup_dim_model</span> <span class="o">==</span> <span class="n">MagScaling</span><span class="o">.</span><span class="n">Sea10_interface</span><span class="p">:</span>
+        <span class="c1"># Strasser et al. (2010), coefficients for interface events</span>
+        <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.18</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.477</span> <span class="o">+</span> <span class="mf">0.585</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.173</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">0.882</span> <span class="o">+</span> <span class="mf">0.351</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.304</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.49</span> <span class="o">+</span> <span class="mf">0.952</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">rup_dim_model</span> <span class="o">==</span> <span class="n">MagScaling</span><span class="o">.</span><span class="n">Sea10_slab</span><span class="p">:</span>
+        <span class="c1"># Strasser et al. (2010), coefficients for slab events</span>
+        <span class="n">sig_length</span> <span class="o">=</span> <span class="mf">0.146</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.35</span> <span class="o">+</span> <span class="mf">0.562</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_length</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">sig_width</span> <span class="o">=</span> <span class="mf">0.067</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.058</span> <span class="o">+</span> <span class="mf">0.356</span> <span class="o">*</span> <span class="n">M</span> <span class="o">+</span> <span class="n">sig_width</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+        <span class="n">sig_area</span> <span class="o">=</span> <span class="mf">0.184</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.225</span> <span class="o">+</span> <span class="mf">0.89</span><span class="o">*</span><span class="n">M</span> <span class="o">+</span> <span class="n">sig_area</span> <span class="o">*</span> <span class="n">epsmid</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported value of </span><span class="se">\&#39;</span><span class="s1">rup_dim_model</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">length</span><span class="p">,</span> <span class="n">sig_length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">sig_width</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">sig_area</span></div>
+
+
+<div class="viewcode-block" id="compute_epsilon"><a class="viewcode-back" href="../../ps2ff.magnitude_scaling.html#ps2ff.magnitude_scaling.compute_epsilon">[docs]</a><span class="k">def</span> <span class="nf">compute_epsilon</span><span class="p">(</span><span class="n">neps</span><span class="p">,</span> <span class="n">trunc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute midpoints and probabilities of epsilon bins.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        neps (int): The number of steps to integrate from -trunc to +trunc.</span>
+<span class="sd">            Larger numbers increase the accuracy of the result, but take</span>
+<span class="sd">            longer to run.</span>
+<span class="sd">        trunc (float): For the integration in area (or length and width), trunc</span>
+<span class="sd">            is the truncation of the normal distribution (in units of sigma).</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: epsilon midpoints, their probabilities, bin width.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Need to assume a truncation level for normal distribution</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">trunc</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">neps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">epsmid</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">eps</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">peps</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">eps</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">eps</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># define delta epsilons to normalize probabilities</span>
+    <span class="n">d_eps</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">trunc</span> <span class="o">/</span> <span class="n">neps</span>
+    <span class="n">epsfac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">neps</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">peps</span> <span class="o">/=</span> <span class="n">epsfac</span>
+    <span class="k">return</span> <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">ps2ff</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">ps2ff</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Eric Thompson, Bruce Worden.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -10,7 +10,7 @@ distance) or Rrup (closest distance to rupture).
 
 Prerequisites and Installation
 ------------------------------
-These programs run in either Python 2.7 or 3.5, and require a number of
+These programs run in Python 3.5 or later, and require a number of
 packages, including the [conda](https://conda.io/docs/) package manager.
 The dependency list is given in `install.sh`. The easiest way to install
 this code is to run `install.sh` in OSX or Linux. It will install
@@ -27,11 +27,11 @@ The primary program is `run_ps2ff`, which must be handed a configuraiton file
 ```
 ps2ff config_file.ini
 ```
-There are example configuration files in the `config` directory. 
+There are example configuration files in the `ps2ff/config` directory. 
 
 Output Tables
 -------------
-The `tables` directory contains example results for some generic seismological
+The `ps2ff/tables` directory contains example results for some generic seismological
 assumptions. The output file name convension is easiest to describe with an
 example:
 ```
@@ -153,3 +153,12 @@ The parameters are the same as for `run_ps2ff`, with the addition of:
 - `M` The earthquake magnitude.
 - `zhyp` The hypocentral depth of the earthquake.
 - `bytheta` Tabulate factors for bins of theta.
+
+Using the results (the API)
+---------------------------
+
+The ps2ff package has an *interpolate* module that contains the PS2FF
+class. This class enables the use of the tables created by run_ps2ff
+to convert point distances to average finite rupture distances.
+See 'ps2ff.interpolate' at https://usgs.github.io/ps2ff for 
+information on the API.
