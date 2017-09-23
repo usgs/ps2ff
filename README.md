@@ -15,7 +15,7 @@ distance adjustments. This package also includes a set of correction factors
 for some common conditions (e.g., typical active crustal regions). These
 can most easily be used with the `interpolate` module that contains the `PS2FF`
 class, which enables the use of the tables for arbitrary magnitudes and
-epicentral distance values. See the 'ps2ff.interpolate' module entry of this
+epicentral distance values. See the `ps2ff.interpolate` section of this
 package's [documentation](https://usgs.github.io/ps2ff/).
 
 Prerequisites and Installation
