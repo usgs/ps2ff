@@ -7,6 +7,15 @@ distance) or Rrup (closest distance to rupture).
 [![Build Status](https://travis-ci.org/usgs/ps2ff.svg?branch=master)](https://travis-ci.org/usgs/ps2ff)
 [![codecov](https://codecov.io/gh/usgs/ps2ff/branch/master/graph/badge.svg)](https://codecov.io/gh/usgs/ps2ff)
 
+Using the results (the API)
+---------------------------
+
+The ps2ff package has an *interpolate* module that contains the PS2FF
+class. This class enables the use of the tables created by run_ps2ff
+to convert point distances to average finite rupture distances.
+See 'ps2ff.interpolate' at https://usgs.github.io/ps2ff for 
+information on the API.
+
 
 Prerequisites and Installation
 ------------------------------
@@ -154,11 +163,3 @@ The parameters are the same as for `run_ps2ff`, with the addition of:
 - `zhyp` The hypocentral depth of the earthquake.
 - `bytheta` Tabulate factors for bins of theta.
 
-Using the results (the API)
----------------------------
-
-The ps2ff package has an *interpolate* module that contains the PS2FF
-class. This class enables the use of the tables created by run_ps2ff
-to convert point distances to average finite rupture distances.
-See 'ps2ff.interpolate' at https://usgs.github.io/ps2ff for 
-information on the API.
