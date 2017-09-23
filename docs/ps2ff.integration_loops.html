@@ -47,46 +47,22 @@
 <code class="descclassname">ps2ff.integration_loops.</code><code class="descname">mag_dist_loop</code><span class="sig-paren">(</span><em>conf</em>, <em>iP=None</em>, <em>filename=None</em>, <em>M=None</em>, <em>Repi=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/integration_loops.html#mag_dist_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.integration_loops.mag_dist_loop" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function loops over M and R, calling rjb_inner_loop
 and writes out progress information.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>conf <span class="classifier-delimiter">:</span> <span class="classifier">The configuration info. It contains the following elements:</span></dt>
-<dd><dl class="first docutils">
-<dt>what (DistType enum): Specifies the distance measure to</dt>
-<dd>integrate.</dd>
-</dl>
-<p>ndip (int): Number of integration steps for dip.
-mindip (float): The minimum rupture dip in degrees (0 to 90).
-maxdip (float): The maximum rupture dip in degrees (0 to 90).
-min_seis_depth (float): The minimum seismogenic depth (km).
-max_seis_depth (float): The maximum seismogenic depth (km).
-rup_dim_model (MagScaling enum): Specifies the model for</p>
-<blockquote>
-<div>compputing the rupture dimensions from magnitude.</div></blockquote>
-<dl class="docutils">
-<dt>mech (Mechanism enum): Specifies earthquake mechanism, used by</dt>
-<dd>some of the models.</dd>
-<dt>LW (bool): Compute length and width from magnitude, and integrate</dt>
-<dd>across them individually. Alternative is to assume an aspect
-ratio.</dd>
-</dl>
-<p>AR (float): Aspect ratio (length/width).
-ntheta (int): Number of integration steps for theta.
-nxny (int): Number of integration steps in the x and y direction.
-neps (int): Number of integration steps for epsilon.
-trunc (float): Epsilon truncation level.
-NP (int): Number of forked processes.
-nz (int): Number of integration steps in depth. Only used</p>
-<blockquote class="last">
-<div>for Rrup calculations.</div></blockquote>
-</dd>
-</dl>
-<p class="last">iP (int): Multiple process index.
-filename (str): Output file name.
-M (numpy.ndarray): Earthquake magnitudes.
-Repi (numpy.ndarray): Epicentral distances (km).</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
+<li><strong>iP</strong> (<em>int</em>) – Multiple process index.</li>
+<li><strong>filename</strong> (<em>str</em>) – Output file name.</li>
+<li><strong>M</strong> (<em>numpy.ndarray</em>) – Earthquake magnitudes.</li>
+<li><strong>Repi</strong> (<em>numpy.ndarray</em>) – Epicentral distances (km).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -104,17 +80,26 @@ for a single M/R pair, looping over:</p>
 </div></blockquote>
 <p>We do this so that parallizaiton is simple: this function can be forked
 onto different cores.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">M (float): Earthquake magnitude.
-Repi (float): Epicentral distance (km).
-conf (ConfigObj): Contains the configuration parameters. See</p>
-<blockquote class="last">
-<div>mag_dist_loop for a list of the parameters.</div></blockquote>
-</dd>
-<dt>Returns:</dt>
-<dd>tuple: Rjb variance, mean Rjb.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>M</strong> (<em>float</em>) – Earthquake magnitude.</li>
+<li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Rjb variance, mean Rjb.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -132,88 +117,75 @@ for a single M/R pair, looping over:</p>
 </div></blockquote>
 <p>We do this so that parallizaiton is simple: this function can be forked
 onto different cores.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first">M (float): Earthquake magnitude.
-Repi (float): Epicentral distance (km).
-conf (ConfigObj): Contains the configuration parameters. See</p>
-<blockquote class="last">
-<div>mag_dist_loop for a list of the parameters.</div></blockquote>
-</dd>
-<dt>Returns:</dt>
-<dd>tuple: Rjb variance, mean Rjb.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>M</strong> (<em>float</em>) – Earthquake magnitude.</li>
+<li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Rjb variance, mean Rjb.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="ps2ff.integration_loops.single_event_inner_loop">
 <code class="descclassname">ps2ff.integration_loops.</code><code class="descname">single_event_inner_loop</code><span class="sig-paren">(</span><em>conf</em>, <em>Repi</em>, <em>theta=0</em>, <em>ntheta=73</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/integration_loops.html#single_event_inner_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.integration_loops.single_event_inner_loop" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>conf (ConfigObj): The configuration object. See single_event_loop</dt>
-<dd>for a list of parameters.</dd>
-</dl>
-<p>Repi (float): Epicentral distance (km).
-theta (float): Source-to-site angle (radians).
-ntheta (int): Number of integration steps for theta; used if <cite>bytheta</cite></p>
-<blockquote class="last">
-<div>is True.</div></blockquote>
-</dd>
-<dt>Returns:</dt>
-<dd>tuple: Rrup variance, Rrup mean, Rjb variance, Rjb mean</dd>
-</dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
+<li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
+<li><strong>theta</strong> (<em>float</em>) – Source-to-site angle (radians).</li>
+<li><strong>ntheta</strong> (<em>int</em>) – Number of integration steps for theta; used if <cite>bytheta</cite>
+is True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Rrup variance, Rrup mean, Rjb variance, Rjb mean</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="ps2ff.integration_loops.single_event_loop">
 <code class="descclassname">ps2ff.integration_loops.</code><code class="descname">single_event_loop</code><span class="sig-paren">(</span><em>conf</em>, <em>iP=0</em>, <em>rjb_filename='junk'</em>, <em>rrup_filename='junk'</em>, <em>M=6.0</em>, <em>Repi=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/integration_loops.html#single_event_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.integration_loops.single_event_loop" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>conf (ConfigObj): The configuration object. Its parameters</dt>
-<dd><p class="first">include:
-ndip (int): Number of integration steps for dip.
-mindip (float): The minimum rupture dip in degrees (0 to 90).
-maxdip (float): The maximum rupture dip in degrees (0 to 90).
-min_seis_depth (float): The minimum seismogenic depth (km).
-max_seis_depth (float): The maximum seismogenic depth (km).
-rup_dim_model (str): String indicating the model for compputing the</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>rupture dimensions from magnitude. Supported values are:</dt>
-<dd><ul class="first last simple">
-<li>‘WC94’</li>
-<li>‘S14’</li>
-<li>‘HB08’</li>
-<li>‘Sea10_interface’</li>
-<li>‘Sea10_slab’</li>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
+<li><strong>iP</strong> (<em>int</em>) – Multiple process index.</li>
+<li><strong>rjb_filename</strong> (<em>str</em>) – Output file name for Rjb results.</li>
+<li><strong>rrup_filename</strong> (<em>str</em>) – Output file name for Rrup results.</li>
+<li><strong>M</strong> (<em>float</em>) – Earthquake magnitude.</li>
+<li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
 </ul>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>mech (str): Optional string indicating earthquake mechanism, used by</dt>
-<dd>some of the models. Anything other than ‘R’, ‘N’, ‘SS’, or ‘A’
-(the default).</dd>
-</dl>
-<p class="last">AR (float): Aspect ratio (length/width).
-ntheta (int): Number of integration steps for theta.
-nxny (int): Number of integration steps in the x and y direction.
-zhyp (float): Epicenter depth (km).
-bytheta (bool): Output results in theta bins.
-neps (int): Number of integration steps for epsilon.
-trunc (float): Epsilon truncation level.
-NP (int): Number of forked processes.</p>
-</dd>
-</dl>
-<p class="last">iP (int): Multiple process index.
-rjb_filename (str): Output file name for Rjb results.
-rrup_filename (str): Output file name for Rrup results.
-M (float): Earthquake magnitude.
-Repi (float): Epicentral distance (km).</p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

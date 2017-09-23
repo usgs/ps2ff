@@ -2,8 +2,9 @@
 PS2FF class for converting point distances (epicentral or hypocentral)
 to equivalent average finite rupture distances (Rjb or Rrup). Based
 upon:
-    Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances
-    without a rupture Bull. Seism. Soc. Am. (in press).
+   - Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances
+     without a rupture Bull. Seism. Soc. Am. (in press).
+
 """
 import os.path
 import re

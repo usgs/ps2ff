@@ -53,9 +53,14 @@
 <dt id="ps2ff.constants.DistType">
 <em class="property">class </em><code class="descclassname">ps2ff.constants.</code><code class="descname">DistType</code><span class="sig-paren">(</span><em>this</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/constants.html#DistType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.constants.DistType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ps2ff.constants.AutoName" title="ps2ff.constants.AutoName"><code class="xref py py-class docutils literal"><span class="pre">ps2ff.constants.AutoName</span></code></a></p>
-<p>Type of distance measure to compute.
-Rjb -&gt; Joyner-Boore distance
-Rrup -&gt; closest distance to rupture</p>
+<dl class="docutils">
+<dt>Type of distance measure to compute.</dt>
+<dd><ul class="first last simple">
+<li>‘Rjb’ is for the Joyner-Boore distance.</li>
+<li>‘Rrup’ is for closest distance to rupture.</li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="ps2ff.constants.DistType.Rjb">
 <code class="descname">Rjb</code><em class="property"> = 'Rjb'</em><a class="headerlink" href="#ps2ff.constants.DistType.Rjb" title="Permalink to this definition">¶</a></dt>
@@ -72,12 +77,17 @@ Rrup -&gt; closest distance to rupture</p>
 <dt id="ps2ff.constants.MagScaling">
 <em class="property">class </em><code class="descclassname">ps2ff.constants.</code><code class="descname">MagScaling</code><span class="sig-paren">(</span><em>this</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/constants.html#MagScaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.constants.MagScaling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ps2ff.constants.AutoName" title="ps2ff.constants.AutoName"><code class="xref py py-class docutils literal"><span class="pre">ps2ff.constants.AutoName</span></code></a></p>
-<p>Magnitude scaling relationship.
-WC94 -&gt; Wells and Coppersmith, 1999
-HB08 -&gt; Hanks and Bakun, 2008
-S14 -&gt; Somerville et al., 2014
-Sea10_interface: Strasser et al. (2010), for interface events
-Sea10_slab: Strasser et al. (2010), for intraplate events</p>
+<dl class="docutils">
+<dt>Magnitude scaling relationship.</dt>
+<dd><ul class="first last simple">
+<li>‘WC94’ is for Wells and Coppersmith (1999)</li>
+<li>‘HB08’ is for Hanks and Bakun (2008)</li>
+<li>‘S14’ is for Somerville et al. (2014)</li>
+<li>‘Sea10_interface’ is for Strasser et al. (2010), for interface events</li>
+<li>‘Sea10_slab’ is for Strasser et al. (2010), for intraplate events</li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="ps2ff.constants.MagScaling.HB08">
 <code class="descname">HB08</code><em class="property"> = 'HB08'</em><a class="headerlink" href="#ps2ff.constants.MagScaling.HB08" title="Permalink to this definition">¶</a></dt>
@@ -109,11 +119,16 @@ Sea10_slab: Strasser et al. (2010), for intraplate events</p>
 <dt id="ps2ff.constants.Mechanism">
 <em class="property">class </em><code class="descclassname">ps2ff.constants.</code><code class="descname">Mechanism</code><span class="sig-paren">(</span><em>this</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/constants.html#Mechanism"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.constants.Mechanism" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ps2ff.constants.AutoName" title="ps2ff.constants.AutoName"><code class="xref py py-class docutils literal"><span class="pre">ps2ff.constants.AutoName</span></code></a></p>
-<p>Source mechanism.
-A -&gt; all (mechanism is unknown/unspecified)
-R -&gt; reverse
-N -&gt; normal
-SS -&gt; strike-slip</p>
+<dl class="docutils">
+<dt>Source mechanism.</dt>
+<dd><ul class="first last simple">
+<li>‘A’ for all (mechanism is unknown/unspecified)</li>
+<li>‘R’ for reverse</li>
+<li>‘N’ for normal</li>
+<li>‘SS’ for strike-slip</li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="ps2ff.constants.Mechanism.A">
 <code class="descname">A</code><em class="property"> = 'A'</em><a class="headerlink" href="#ps2ff.constants.Mechanism.A" title="Permalink to this definition">¶</a></dt>

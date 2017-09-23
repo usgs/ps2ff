@@ -13,6 +13,7 @@ from distutils.dir_util import copy_tree
 
 from impactutils.io.cmd import get_command_output
 
+
 def main(args):
     """
     Generate API docs.
@@ -39,7 +40,7 @@ def main(args):
     #-------------------------------------------------------------
     PACKAGE = "ps2ff"
     AUTHORS = 'Eric Thompson, Bruce Worden'
-    verstr = '1.0'
+    verstr = '1.1'
 
     #-------------------------------------------------------------
     # run the api doc command; this creates the .rst files

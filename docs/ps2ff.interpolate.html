@@ -46,8 +46,11 @@
 to equivalent average finite rupture distances (Rjb or Rrup). Based
 upon:</p>
 <blockquote>
-<div>Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances
-without a rupture Bull. Seism. Soc. Am. (in press).</div></blockquote>
+<div><ul class="simple">
+<li>Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances
+without a rupture Bull. Seism. Soc. Am. (in press).</li>
+</ul>
+</div></blockquote>
 <dl class="class">
 <dt id="ps2ff.interpolate.PS2FF">
 <em class="property">class </em><code class="descclassname">ps2ff.interpolate.</code><code class="descname">PS2FF</code><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF" title="Permalink to this definition">¶</a></dt>
@@ -57,12 +60,18 @@ without a rupture Bull. Seism. Soc. Am. (in press).</div></blockquote>
 <code class="descname">files</code><span class="sig-paren">(</span><em>this</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the table files that were used to construct this
 object.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>(str, str): A tuple of the ratio file and variance file.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple of the ratio file and variance file.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(str, str)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
@@ -70,20 +79,23 @@ object.</p>
 <em class="property">classmethod </em><code class="descname">fromFile</code><span class="sig-paren">(</span><em>rfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.fromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.fromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PS2FF object from a file specification. The file must
 exist in the ps2ff tables.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>rfile (str): A file name (base file name only, not a full</dt>
-<dd>path) corresponding to one of the tables in the
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rfile</strong> (<em>str</em>) – A file name (base file name only, not a full
+path) corresponding to one of the tables in the
 ps2ff.data resource. The file should be the
 “Ratios” file; the “Var” file name is derived
-from the Ratios file.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>(PS2FF): An object of the PS2FF class initialized with
-the tables corresponding to the rfile argument.</dd>
-</dl>
+from the Ratios file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An object of the PS2FF class initialized with
+the tables corresponding to the rfile argument.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(<a class="reference internal" href="#ps2ff.interpolate.PS2FF" title="ps2ff.interpolate.PS2FF">PS2FF</a>)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
@@ -95,33 +107,41 @@ tables. The file name will take the form:</p>
 <p>&lt;dist_type&gt;_&lt;mag_scaling&gt;_mech&lt;mechanism&gt;_ar&lt;AR&gt;_seis&lt;min_seis_depth&gt;_&lt;max_seis_depth&gt;_Ratios.csv</p>
 <p>where the decimal point in the aspect ratio will be replaced
 with the letter ‘p’.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>dist_type (DistType): One of the DistType enum members.</dt>
-<dd>Typically DistType.Rjb (default) or DistType.Rrup. See
-ps2ff.constants for a complete list.</dd>
-<dt>mag_scaling (MagScaling): One of the MagScaling enum</dt>
-<dd>members.See ps2ff.constants for a complete list.
-The default is MagScaling.WC94.</dd>
-<dt>mechanism (Mechanism): A mechanism from the Mechanism</dt>
-<dd>enum. See ps2ff.constants for a complete list. The
-default is Mechanism.A.</dd>
-<dt>AR (float): The aspect ratio for the rupture computations.</dt>
-<dd>Typical values are 1.7 (default) and 1.0; tables may
-not exist for other values.</dd>
-<dt>min_seis_depth (int): The depth (km) to the top of the</dt>
-<dd>seismogenic zone. This is typically 0 (default);
-tables for other values may not exist.</dd>
-<dt>max_seis_depth (int): The depth (km) to the bottom of the</dt>
-<dd>seismogenic zone. Typical values are 15 (for ACR
-regions) and 20 (default, for SCR regions).</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>(PS2FF): An object of the PS2FF class initialized with
-the tables corresponding to the selected parameters.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dist_type</strong> (<a class="reference internal" href="ps2ff.constants.html#ps2ff.constants.DistType" title="ps2ff.constants.DistType"><em>DistType</em></a>) – One of the DistType enum members.
+Typically DistType.Rjb (default) or DistType.Rrup. See
+ps2ff.constants for a complete list.</li>
+<li><strong>mag_scaling</strong> (<a class="reference internal" href="ps2ff.constants.html#ps2ff.constants.MagScaling" title="ps2ff.constants.MagScaling"><em>MagScaling</em></a>) – One of the MagScaling enum
+members.See ps2ff.constants for a complete list.
+The default is MagScaling.WC94.</li>
+<li><strong>mechanism</strong> (<a class="reference internal" href="ps2ff.constants.html#ps2ff.constants.Mechanism" title="ps2ff.constants.Mechanism"><em>Mechanism</em></a>) – A mechanism from the Mechanism
+enum. See ps2ff.constants for a complete list. The
+default is Mechanism.A.</li>
+<li><strong>AR</strong> (<em>float</em>) – The aspect ratio for the rupture computations.
+Typical values are 1.7 (default) and 1.0; tables may
+not exist for other values.</li>
+<li><strong>min_seis_depth</strong> (<em>int</em>) – The depth (km) to the top of the
+seismogenic zone. This is typically 0 (default);
+tables for other values may not exist.</li>
+<li><strong>max_seis_depth</strong> (<em>int</em>) – The depth (km) to the bottom of the
+seismogenic zone. Typical values are 15 (for ACR
+regions) and 20 (default, for SCR regions).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An object of the PS2FF class initialized with
+the tables corresponding to the selected parameters.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<a class="reference internal" href="#ps2ff.interpolate.PS2FF" title="ps2ff.interpolate.PS2FF">PS2FF</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
@@ -129,13 +149,17 @@ the tables corresponding to the selected parameters.</dd>
 <em class="property">classmethod </em><code class="descname">getValidFiles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.getValidFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.getValidFiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the valid conversion tables in the ps2ff
 package.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>None</dd>
-<dt>Returns:</dt>
-<dd>A list of file names corresponding to the available tables
-in the ps2ff package.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong> – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of file names corresponding to the available tables
+in the ps2ff package.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -144,22 +168,31 @@ in the ps2ff package.</dd>
 <dd><p>Convert point distances to the equivalent average finite rupture
 distances, based on the parameters specified when creating this
 object.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>r (numpy.ndarray): An array of point distances (typically</dt>
-<dd>epicentral distance) in km.</dd>
-<dt>M (numpy.ndarray): An array (the same shape as r) of</dt>
-<dd>magnitudes.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> (<em>numpy.ndarray</em>) – An array of point distances (typically
+epicentral distance) in km.</li>
+<li><strong>M</strong> (<em>numpy.ndarray</em>) – An array (the same shape as r) of
+magnitudes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>An array the same shape as r, with</dt>
+<dd><p class="first last">distances converted to average finite rupture distance.</p>
 </dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(numpy.ndarray): An array the same shape as r, with</dt>
-<dd>distances converted to average finite rupture distance.</dd>
 </dl>
-</dd>
-</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(numpy.ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -168,23 +201,32 @@ object.</p>
 <dd><p>Return ratios needed to convert point distances to the equivalent
 average finite rupture distances, based on the parameters specified
 when creating this object.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>r (numpy.ndarray): An array of point distances (typically</dt>
-<dd>epicentral distance) in km.</dd>
-<dt>M (numpy.ndarray): An array (the same shape as r) of</dt>
-<dd>magnitudes.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> (<em>numpy.ndarray</em>) – An array of point distances (typically
+epicentral distance) in km.</li>
+<li><strong>M</strong> (<em>numpy.ndarray</em>) – An array (the same shape as r) of
+magnitudes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>An array the same shape as r, with</dt>
+<dd><p class="first last">the ratios (multipliers) needed to convert r to
+average finite rupture distance.</p>
 </dd>
-<dt>Returns:</dt>
-<dd><dl class="first last docutils">
-<dt>(numpy.ndarray): An array the same shape as r, with</dt>
-<dd>the ratios (multipliers) needed to convert r to
-average finite rupture distance.</dd>
 </dl>
-</dd>
-</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(numpy.ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -192,20 +234,28 @@ average finite rupture distance.</dd>
 <code class="descname">var</code><span class="sig-paren">(</span><em>this</em>, <em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the additional variance from the uncertainty in
 point distances vis a vis finite rupture distance.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>r (numpy.ndarray): An array of point distances (typically</dt>
-<dd>epicentral distance) in km.</dd>
-<dt>M (numpy.ndarray): An array (the same shape as r) of</dt>
-<dd>magnitudes.</dd>
-</dl>
-</dd>
-<dt>Returns:</dt>
-<dd>(numpy.ndarray): An array the same shape as r, containing
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> (<em>numpy.ndarray</em>) – An array of point distances (typically
+epicentral distance) in km.</li>
+<li><strong>M</strong> (<em>numpy.ndarray</em>) – An array (the same shape as r) of
+magnitudes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An array the same shape as r, containing
 the additional variance from the uncertainty in finite
-rupture distance for the distances in r.</dd>
-</dl>
+rupture distance for the distances in r.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(numpy.ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
