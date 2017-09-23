@@ -5,7 +5,7 @@ from impactutils.io.cmd import get_command_output
 
 
 def test_rjb_WC94():
-    cmd = "run_ps2ff tests/config/test_Rjb_WC94.ini"
+    cmd = "bin/run_ps2ff tests/config/test_Rjb_WC94.ini"
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
             "tests/data/test_Rjb_WC94_mechA_ar1p7_seis0_20_Ratios.csv",
@@ -28,7 +28,7 @@ def test_rjb_WC94():
 
 
 def test_rjb_S14():
-    cmd = "run_ps2ff tests/config/test_Rjb_S14.ini"
+    cmd = "bin/run_ps2ff tests/config/test_Rjb_S14.ini"
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
             "tests/data/test_Rjb_S14_mechA_ar1p7_seis0_20_Ratios.csv",
@@ -51,7 +51,7 @@ def test_rjb_S14():
 
 
 def test_rrup_S14():
-    cmd = "run_ps2ff tests/config/test_Rrup_S14.ini"
+    cmd = "bin/run_ps2ff tests/config/test_Rrup_S14.ini"
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
             "tests/data/test_Rrup_S14_mechA_ar2p0_seis0_15_Ratios.csv",
@@ -74,7 +74,7 @@ def test_rrup_S14():
 
 
 def test_rrup_WC94():
-    cmd = "run_ps2ff tests/config/test_Rrup_WC94.ini"
+    cmd = "bin/run_ps2ff tests/config/test_Rrup_WC94.ini"
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
             "tests/data/test_Rrup_WC94_mechA_ar2p0_seis0_15_Ratios.csv",

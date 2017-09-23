@@ -1,0 +1,1003 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ps2ff.integration_loops &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ps2ff.integration_loops</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">ps2ff.magnitude_scaling</span> <span class="k">import</span> <span class="n">dimensions_from_magnitude</span>
+<span class="kn">from</span> <span class="nn">ps2ff.magnitude_scaling</span> <span class="k">import</span> <span class="n">compute_epsilon</span>
+<span class="kn">from</span> <span class="nn">ps2ff.constants</span> <span class="k">import</span> <span class="n">DistType</span><span class="p">,</span> <span class="n">Mechanism</span><span class="p">,</span> <span class="n">MagScaling</span>
+
+
+<div class="viewcode-block" id="mag_dist_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.mag_dist_loop">[docs]</a><span class="k">def</span> <span class="nf">mag_dist_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">iP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Repi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function loops over M and R, calling rjb_inner_loop</span>
+<span class="sd">    and writes out progress information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        conf : The configuration info. It contains the following elements:</span>
+<span class="sd">            what (DistType enum): Specifies the distance measure to</span>
+<span class="sd">                integrate.</span>
+<span class="sd">            ndip (int): Number of integration steps for dip.</span>
+<span class="sd">            mindip (float): The minimum rupture dip in degrees (0 to 90).</span>
+<span class="sd">            maxdip (float): The maximum rupture dip in degrees (0 to 90).</span>
+<span class="sd">            min_seis_depth (float): The minimum seismogenic depth (km).</span>
+<span class="sd">            max_seis_depth (float): The maximum seismogenic depth (km).</span>
+<span class="sd">            rup_dim_model (MagScaling enum): Specifies the model for</span>
+<span class="sd">                compputing the rupture dimensions from magnitude.</span>
+<span class="sd">            mech (Mechanism enum): Specifies earthquake mechanism, used by</span>
+<span class="sd">                some of the models.</span>
+<span class="sd">            LW (bool): Compute length and width from magnitude, and integrate</span>
+<span class="sd">                across them individually. Alternative is to assume an aspect</span>
+<span class="sd">                ratio.</span>
+<span class="sd">            AR (float): Aspect ratio (length/width).</span>
+<span class="sd">            ntheta (int): Number of integration steps for theta.</span>
+<span class="sd">            nxny (int): Number of integration steps in the x and y direction.</span>
+<span class="sd">            neps (int): Number of integration steps for epsilon.</span>
+<span class="sd">            trunc (float): Epsilon truncation level.</span>
+<span class="sd">            NP (int): Number of forked processes.</span>
+<span class="sd">            nz (int): Number of integration steps in depth. Only used</span>
+<span class="sd">                for Rrup calculations.</span>
+<span class="sd">        iP (int): Multiple process index.</span>
+<span class="sd">        filename (str): Output file name.</span>
+<span class="sd">        M (numpy.ndarray): Earthquake magnitudes.</span>
+<span class="sd">        Repi (numpy.ndarray): Epicentral distances (km).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nepi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">Repi</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;NP&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;NP&#39;</span><span class="p">])</span>
+        <span class="n">Repi</span> <span class="o">=</span> <span class="n">Repi</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+        <span class="n">nepi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">Repi</span><span class="p">)</span>
+
+    <span class="n">nmag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">nmag</span><span class="p">))</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">nmag</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nepi</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nmag</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">DistType</span><span class="o">.</span><span class="n">Rjb</span><span class="p">:</span>
+                <span class="n">dist_var</span><span class="p">,</span> <span class="n">dist_avg</span> <span class="o">=</span> <span class="n">rjb_inner_loop</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">conf</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">DistType</span><span class="o">.</span><span class="n">Rrup</span><span class="p">:</span>
+                <span class="n">dist_var</span><span class="p">,</span> <span class="n">dist_avg</span> <span class="o">=</span> <span class="n">rrup_inner_loop</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">conf</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unknown distance type: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]))</span>
+
+            <span class="n">ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_var</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmag</span><span class="p">,</span>
+                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span>
+              <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+
+    <span class="k">for</span> <span class="n">fname</span><span class="p">,</span> <span class="n">farr</span> <span class="ow">in</span> <span class="p">((</span><span class="s1">&#39;Ratios&#39;</span><span class="p">,</span> <span class="n">ratio</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Var&#39;</span><span class="p">,</span> <span class="n">variance</span><span class="p">)):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nepi</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">,&quot;</span> <span class="o">%</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nmag</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">farr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">nmag</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="single_event_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.single_event_loop">[docs]</a><span class="k">def</span> <span class="nf">single_event_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">iP</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rjb_filename</span><span class="o">=</span><span class="s1">&#39;junk&#39;</span><span class="p">,</span>
+                      <span class="n">rrup_filename</span><span class="o">=</span><span class="s1">&#39;junk&#39;</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">Repi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        conf (ConfigObj): The configuration object. Its parameters</span>
+<span class="sd">            include:</span>
+<span class="sd">            ndip (int): Number of integration steps for dip.</span>
+<span class="sd">            mindip (float): The minimum rupture dip in degrees (0 to 90).</span>
+<span class="sd">            maxdip (float): The maximum rupture dip in degrees (0 to 90).</span>
+<span class="sd">            min_seis_depth (float): The minimum seismogenic depth (km).</span>
+<span class="sd">            max_seis_depth (float): The maximum seismogenic depth (km).</span>
+<span class="sd">            rup_dim_model (str): String indicating the model for compputing the</span>
+<span class="sd">                rupture dimensions from magnitude. Supported values are:</span>
+<span class="sd">                    - &#39;WC94&#39;</span>
+<span class="sd">                    - &#39;S14&#39;</span>
+<span class="sd">                    - &#39;HB08&#39;</span>
+<span class="sd">                    - &#39;Sea10_interface&#39;</span>
+<span class="sd">                    - &#39;Sea10_slab&#39;</span>
+<span class="sd">            mech (str): Optional string indicating earthquake mechanism, used by</span>
+<span class="sd">                some of the models. Anything other than &#39;R&#39;, &#39;N&#39;, &#39;SS&#39;, or &#39;A&#39;</span>
+<span class="sd">                (the default).</span>
+<span class="sd">            AR (float): Aspect ratio (length/width).</span>
+<span class="sd">            ntheta (int): Number of integration steps for theta.</span>
+<span class="sd">            nxny (int): Number of integration steps in the x and y direction.</span>
+<span class="sd">            zhyp (float): Epicenter depth (km).</span>
+<span class="sd">            bytheta (bool): Output results in theta bins.</span>
+<span class="sd">            neps (int): Number of integration steps for epsilon.</span>
+<span class="sd">            trunc (float): Epsilon truncation level.</span>
+<span class="sd">            NP (int): Number of forked processes.</span>
+<span class="sd">        iP (int): Multiple process index.</span>
+<span class="sd">        rjb_filename (str): Output file name for Rjb results.</span>
+<span class="sd">        rrup_filename (str): Output file name for Rrup results.</span>
+<span class="sd">        M (float): Earthquake magnitude.</span>
+<span class="sd">        Repi (float): Epicentral distance (km).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nepi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">Repi</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;NP&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nepi&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;NP&#39;</span><span class="p">])</span>
+        <span class="n">Repi</span> <span class="o">=</span> <span class="n">Repi</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+        <span class="n">nepi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">Repi</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ip=</span><span class="si">%d</span><span class="s1"> nepi=</span><span class="si">%d</span><span class="s1"> Repi: &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">nepi</span><span class="p">),</span> <span class="n">Repi</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">Rrup_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]))</span>
+        <span class="n">Rrup_variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]))</span>
+        <span class="n">Rjb_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]))</span>
+        <span class="n">Rjb_variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rrup_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">Rrup_variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">Rjb_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">Rjb_variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nepi</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nepi</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>  <span class="c1"># in rad</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]):</span>
+                <span class="n">rrup_var</span><span class="p">,</span> <span class="n">rrup_avg</span><span class="p">,</span> <span class="n">rjb_var</span><span class="p">,</span> <span class="n">rjb_avg</span> <span class="o">=</span> \
+                    <span class="n">single_event_inner_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">theta</span><span class="p">[</span><span class="n">j</span><span class="p">]]),</span>
+                                            <span class="n">ntheta</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">Rrup_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rrup_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">Rrup_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rrup_var</span>
+                <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_var</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+                      <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">],</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                      <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rrup_var</span><span class="p">,</span> <span class="n">rrup_avg</span><span class="p">,</span> <span class="n">rjb_var</span><span class="p">,</span> <span class="n">rjb_avg</span> <span class="o">=</span> \
+                <span class="n">single_event_inner_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">theta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                        <span class="n">ntheta</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+            <span class="n">Rrup_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rrup_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">Rrup_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rrup_var</span>
+            <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_var</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span>
+                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+    <span class="n">fr_rrup</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Ratios_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rrup_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">fv_rrup</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Var_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rrup_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">fr_rjb</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Ratios_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rjb_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">fv_rjb</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Var_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rjb_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nepi</span><span class="p">):</span>
+        <span class="n">fr_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">,&quot;</span> <span class="o">%</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">fv_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">,&quot;</span> <span class="o">%</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">fr_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">,&quot;</span> <span class="o">%</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">fv_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">,&quot;</span> <span class="o">%</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]):</span>
+                <span class="n">fr_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rrup_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">fv_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rrup_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">fr_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">fv_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">fr_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="n">fv_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="n">fr_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="n">fv_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">fr_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fv_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fr_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fv_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fr_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rrup_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">fv_rrup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rrup_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">fr_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">fv_rjb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">fr_rrup</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">fv_rrup</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">fr_rjb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">fv_rjb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rjb_inner_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.rjb_inner_loop">[docs]</a><span class="k">def</span> <span class="nf">rjb_inner_loop</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">Repi</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function evaluates the Rjb mean and var integral</span>
+<span class="sd">    for a single M/R pair, looping over:</span>
+<span class="sd">       - dip</span>
+<span class="sd">       - dx, dy (location of hypocenter on fault)</span>
+<span class="sd">       - theta (angle to fault)</span>
+<span class="sd">       - epsilon (dummy variable for L/W/A integration)</span>
+<span class="sd">    We do this so that parallizaiton is simple: this function can be forked</span>
+<span class="sd">    onto different cores.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (float): Earthquake magnitude.</span>
+<span class="sd">        Repi (float): Epicentral distance (km).</span>
+<span class="sd">        conf (ConfigObj): Contains the configuration parameters. See</span>
+<span class="sd">            mag_dist_loop for a list of the parameters.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Rjb variance, mean Rjb.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_seis_thickness</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;min_seis_depth&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+        <span class="n">ddip</span> <span class="o">=</span> <span class="n">dip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dipnorm</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">]])</span>
+
+    <span class="n">length</span><span class="p">,</span> <span class="n">sig_length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">sigw</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">sig_area</span> <span class="o">=</span> \
+        <span class="n">dimensions_from_magnitude</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;rup_dim_model&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span>
+                                  <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mech&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;LW&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Selected model does not support direct &#39;</span>
+                            <span class="s1">&#39;estimation of length and width. Either &#39;</span>
+                            <span class="s1">&#39;select an one that does, or use an assumed &#39;</span>
+                            <span class="s1">&#39;aspect ratio.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+            <span class="n">nw</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Trick the L and W loops to handle a one to one mapping</span>
+        <span class="c1"># between L and W, and each L/W pair corresponds to a</span>
+        <span class="c1"># single M looping over epsilon; specify length and</span>
+        <span class="c1"># width constrained by seismogenic depth.</span>
+
+        <span class="n">width_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">area</span><span class="o">/</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;AR&#39;</span><span class="p">]),</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">sindip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]))</span>
+        <span class="n">rup_z</span> <span class="o">=</span> <span class="n">width_matrix</span> <span class="o">*</span> <span class="n">sindip</span>
+        <span class="n">indxx</span> <span class="o">=</span> <span class="n">rup_z</span> <span class="o">&gt;</span> <span class="n">max_seis_thickness</span>
+        <span class="n">width_matrix</span><span class="p">[</span><span class="n">indxx</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_seis_thickness</span> <span class="o">/</span> <span class="n">sindip</span><span class="p">[</span><span class="n">indxx</span><span class="p">]</span>
+        <span class="n">length_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">width_matrix</span>
+        <span class="n">nl</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">nw</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>  <span class="c1"># in rad</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># origin defined at o:</span>
+    <span class="c1">#</span>
+    <span class="c1">#  + +------+</span>
+    <span class="c1">#  | |      |</span>
+    <span class="c1">#  L |      |</span>
+    <span class="c1">#  | |      |</span>
+    <span class="c1">#  + o------+</span>
+    <span class="c1">#    +--SW--+</span>
+    <span class="c1">#</span>
+    <span class="n">one_over_2pi</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="n">compute_epsilon</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">])</span>
+
+    <span class="n">integrand_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">integrand_width2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">integrand_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+    <span class="n">integrand_length2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+    <span class="n">integrand_dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">integrand_dip2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">Rjb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nw</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nl</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;LW&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">l</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="n">width_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">length</span> <span class="o">=</span> <span class="n">length_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">w</span>
+                <span class="n">one_over_ll</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+
+                <span class="n">ny</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">],</span> <span class="n">ny</span><span class="p">)</span>
+                <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">integrand_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ny</span><span class="p">)</span>
+                <span class="n">integrand_y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ny</span><span class="p">)</span>
+
+                <span class="c1"># Fault width projected to surface:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">SW</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">nx</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SW</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">SW</span> <span class="o">=</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="n">one_over_sw</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SW</span>
+
+                    <span class="c1"># Since we still use linspace, dx won&#39;t be exactly minx.</span>
+                    <span class="c1"># Also put a hard bound on minimum nx to be 2 so that dx</span>
+                    <span class="c1"># makes sense.</span>
+                    <span class="n">nx</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SW</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">integrand_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+                <span class="n">integrand_x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+                    <span class="n">xj</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                    <span class="n">xltz</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                    <span class="n">xgez_and_xlesw</span> <span class="o">=</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&lt;=</span> <span class="n">SW</span><span class="p">)</span>
+                    <span class="n">xgtsw</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&gt;</span> <span class="n">SW</span>
+                    <span class="n">c1x</span> <span class="o">=</span> <span class="n">xltz</span>
+                    <span class="n">c2x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                    <span class="n">c3x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                    <span class="n">c4x</span> <span class="o">=</span> <span class="n">xltz</span>
+                    <span class="n">c5x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                    <span class="n">c6x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                    <span class="n">c7x</span> <span class="o">=</span> <span class="n">xltz</span>
+                    <span class="n">c8x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                    <span class="n">c9x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ny</span><span class="p">):</span>
+                        <span class="n">yi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                        <span class="n">cca</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                        <span class="n">ccb</span> <span class="o">=</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&lt;=</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">])</span>
+                        <span class="n">ccc</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                        <span class="n">c1</span> <span class="o">=</span> <span class="n">c1x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                        <span class="n">c2</span> <span class="o">=</span> <span class="n">c2x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                        <span class="n">c3</span> <span class="o">=</span> <span class="n">c3x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                        <span class="n">c4</span> <span class="o">=</span> <span class="n">c4x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                        <span class="n">c5</span> <span class="o">=</span> <span class="n">c5x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                        <span class="n">c6</span> <span class="o">=</span> <span class="n">c6x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                        <span class="n">c7</span> <span class="o">=</span> <span class="n">c7x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                        <span class="n">c8</span> <span class="o">=</span> <span class="n">c8x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                        <span class="n">c9</span> <span class="o">=</span> <span class="n">c9x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                        <span class="c1"># The original version below. The above two chunks</span>
+                        <span class="c1"># are an optimization of the following:</span>
+                        <span class="c1"># c1 = (xj &lt;  0) &amp;              (yi &gt; L[l])</span>
+                        <span class="c1"># c2 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &gt; L[l])</span>
+                        <span class="c1"># c3 = (xj &gt; SW) &amp;              (yi &gt; L[l])</span>
+                        <span class="c1"># c4 = (xj &lt;  0) &amp;              (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                        <span class="c1"># c5 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                        <span class="c1"># c6 = (xj &gt; SW) &amp;              (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                        <span class="c1"># c7 = (xj &lt;  0) &amp;              (yi &lt; 0)</span>
+                        <span class="c1"># c8 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &lt; 0)</span>
+                        <span class="c1"># c9 = (xj &gt; SW) &amp;              (yi &lt; 0)</span>
+
+                        <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                        <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xj</span><span class="p">[</span><span class="n">c4</span><span class="p">])</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                        <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c8</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yi</span><span class="p">[</span><span class="n">c8</span><span class="p">])</span>
+                        <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span>
+                        <span class="n">Rjb</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                        <span class="n">Rjb2</span> <span class="o">=</span> <span class="n">Rjb</span> <span class="o">*</span> <span class="n">Rjb</span>
+                        <span class="n">integrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                        <span class="n">integrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rjb2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                    <span class="n">integrand_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ll</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                    <span class="n">integrand_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ll</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_y2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">integrand_dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">integrand_dip2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_x2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">integrand_dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_x</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+                    <span class="n">integrand_dip2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_x2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">integrand_length</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_dip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">integrand_length2</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_dip2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integrand_length</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_dip</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+                <span class="n">integrand_length2</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_dip2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nw</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">integrand_width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">integrand_width2</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_length2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">integrand_width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_length</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+            <span class="n">integrand_width2</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_length2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nw</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Rjb_avg</span> <span class="o">=</span> <span class="n">integrand_width</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Rjb_var</span> <span class="o">=</span> <span class="n">integrand_width2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rjb_avg</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rjb_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_width</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+        <span class="n">Rjb_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_width2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">Rjb_avg</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">Rjb_var</span><span class="p">,</span> <span class="n">Rjb_avg</span></div>
+
+
+<div class="viewcode-block" id="rrup_inner_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.rrup_inner_loop">[docs]</a><span class="k">def</span> <span class="nf">rrup_inner_loop</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">Repi</span><span class="p">,</span> <span class="n">conf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function evaluates the Rrup mean and var integral</span>
+<span class="sd">    for a single M/R pair, looping over:</span>
+<span class="sd">       - dip</span>
+<span class="sd">       - dx, dy (location of hypocenter on fault)</span>
+<span class="sd">       - theta (angle to fault)</span>
+<span class="sd">       - epsilon (dummy variable for L/W/A integration)</span>
+<span class="sd">    We do this so that parallizaiton is simple: this function can be forked</span>
+<span class="sd">    onto different cores.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (float): Earthquake magnitude.</span>
+<span class="sd">        Repi (float): Epicentral distance (km).</span>
+<span class="sd">        conf (ConfigObj): Contains the configuration parameters. See</span>
+<span class="sd">            mag_dist_loop for a list of the parameters.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Rjb variance, mean Rjb.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_seis_thickness</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;min_seis_depth&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+        <span class="n">ddip</span> <span class="o">=</span> <span class="n">dip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dipnorm</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">]])</span>
+
+    <span class="n">length</span><span class="p">,</span> <span class="n">sig_length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">sigw</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">sig_area</span> <span class="o">=</span> \
+        <span class="n">dimensions_from_magnitude</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;rup_dim_model&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span>
+                                  <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mech&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;LW&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Selected model does not support direct &#39;</span>
+                            <span class="s1">&#39;estimation of length and width. Either &#39;</span>
+                            <span class="s1">&#39;select an one that does, or use an assumed &#39;</span>
+                            <span class="s1">&#39;aspect ratio.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+            <span class="n">nw</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Trick the L and W loops to handle a one to one mapping</span>
+        <span class="c1"># between L and W, and each L/W pair corresponds to a</span>
+        <span class="c1"># single M looping over epsilon; specify length and</span>
+        <span class="c1"># width constrained by seismogenic depth.</span>
+
+        <span class="n">width_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">area</span><span class="o">/</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;AR&#39;</span><span class="p">]),</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">sindip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]))</span>
+        <span class="n">rup_z</span> <span class="o">=</span> <span class="n">width_matrix</span> <span class="o">*</span> <span class="n">sindip</span>
+        <span class="n">indxx</span> <span class="o">=</span> <span class="n">rup_z</span> <span class="o">&gt;</span> <span class="n">max_seis_thickness</span>
+        <span class="n">width_matrix</span><span class="p">[</span><span class="n">indxx</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_seis_thickness</span> <span class="o">/</span> <span class="n">sindip</span><span class="p">[</span><span class="n">indxx</span><span class="p">]</span>
+        <span class="n">length_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">width_matrix</span>
+        <span class="n">nl</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">nw</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>  <span class="c1"># in rad</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># origin defined at o:</span>
+    <span class="c1">#</span>
+    <span class="c1">#  + +------+</span>
+    <span class="c1">#  | |      |</span>
+    <span class="c1">#  L |      |</span>
+    <span class="c1">#  | |      |</span>
+    <span class="c1">#  + o------+</span>
+    <span class="c1">#    +--SW--+</span>
+    <span class="c1">#</span>
+    <span class="n">one_over_2pi</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="n">compute_epsilon</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">])</span>
+
+    <span class="n">integrand_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">integrand_width2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">integrand_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+    <span class="n">integrand_length2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+    <span class="n">integrand_dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">integrand_dip2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">integrand_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">])</span>
+    <span class="n">integrand_depth2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">])</span>
+    <span class="n">Rjb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+    <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+    <span class="n">Rrupp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+    <span class="n">Ry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nw</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nl</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;LW&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">l</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="n">width_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">length</span> <span class="o">=</span> <span class="n">length_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">w</span>
+                <span class="n">one_over_ll</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+
+                <span class="c1"># Since we still use linspace, dy won&#39;t be exactly minx.</span>
+                <span class="c1"># Also put a hard bound on minimum ny to be 2 so that dy</span>
+                <span class="c1"># makes sense.</span>
+                <span class="n">ny</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">],</span> <span class="n">ny</span><span class="p">)</span>
+                <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">integrand_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ny</span><span class="p">)</span>
+                <span class="n">integrand_y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ny</span><span class="p">)</span>
+
+                <span class="c1"># Fault width projected to surface:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">SW</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">nx</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SW</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">SW</span> <span class="o">=</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="n">one_over_sw</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SW</span>
+
+                    <span class="c1"># Since we still use linspace, dx won&#39;t be exactly minx.</span>
+                    <span class="c1"># Also put a hard bound on minimum nx to be 2 so that dx</span>
+                    <span class="c1"># makes sense.</span>
+                    <span class="n">nx</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SW</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># Calclate range of Ztor</span>
+                <span class="n">ZtorMax</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ZtorMax</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># Should 0 be min_seis_depth</span>
+                    <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">dz</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">Ztor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>        <span class="c1"># should be min_seis_depth ???</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">nz</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span>
+                    <span class="n">one_over_ztormax</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">ZtorMax</span>
+                    <span class="n">Ztor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ZtorMax</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+                    <span class="n">dz</span> <span class="o">=</span> <span class="n">Ztor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">Ztor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">integrand_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+                <span class="n">integrand_x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nz</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+                        <span class="n">xj</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                        <span class="n">xltz</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                        <span class="n">xgez_and_xlesw</span> <span class="o">=</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&lt;=</span> <span class="n">SW</span><span class="p">)</span>
+                        <span class="n">xgtsw</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&gt;</span> <span class="n">SW</span>
+                        <span class="n">c1x</span> <span class="o">=</span> <span class="n">xltz</span>
+                        <span class="n">c2x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                        <span class="n">c3x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                        <span class="n">c4x</span> <span class="o">=</span> <span class="n">xltz</span>
+                        <span class="n">c5x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                        <span class="n">c6x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                        <span class="n">c7x</span> <span class="o">=</span> <span class="n">xltz</span>
+                        <span class="n">c8x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                        <span class="n">c9x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ny</span><span class="p">):</span>
+                            <span class="n">yi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                            <span class="n">cca</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                            <span class="n">ccb</span> <span class="o">=</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&lt;=</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">])</span>
+                            <span class="n">ccc</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                            <span class="n">c1</span> <span class="o">=</span> <span class="n">c1x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                            <span class="n">c2</span> <span class="o">=</span> <span class="n">c2x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                            <span class="n">c3</span> <span class="o">=</span> <span class="n">c3x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                            <span class="n">c4</span> <span class="o">=</span> <span class="n">c4x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                            <span class="n">c5</span> <span class="o">=</span> <span class="n">c5x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                            <span class="n">c6</span> <span class="o">=</span> <span class="n">c6x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                            <span class="n">c7</span> <span class="o">=</span> <span class="n">c7x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                            <span class="n">c8</span> <span class="o">=</span> <span class="n">c8x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                            <span class="n">c9</span> <span class="o">=</span> <span class="n">c9x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                            <span class="c1"># The original version. The above two chunks should</span>
+                            <span class="c1"># implement this</span>
+                            <span class="c1"># c1 = (xj &lt;  0) &amp;              (yi &gt; L[l])</span>
+                            <span class="c1"># c2 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &gt; L[l])</span>
+                            <span class="c1"># c3 = (xj &gt; SW) &amp;              (yi &gt; L[l])</span>
+                            <span class="c1"># c4 = (xj &lt;  0) &amp;              (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                            <span class="c1"># c5 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                            <span class="c1"># c6 = (xj &gt; SW) &amp;              (yi &gt;= 0) &amp; (yi &lt;= L[l])</span>
+                            <span class="c1"># c7 = (xj &lt;  0) &amp;              (yi &lt; 0)</span>
+                            <span class="c1"># c8 = (xj &gt;= 0) &amp; (xj &lt;= SW) &amp; (yi &lt; 0)</span>
+                            <span class="c1"># c9 = (xj &gt; SW) &amp;              (yi &lt; 0)</span>
+
+                            <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span>
+                            <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                            <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                            <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xj</span><span class="p">[</span><span class="n">c4</span><span class="p">])</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                            <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                            <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c8</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yi</span><span class="p">[</span><span class="n">c8</span><span class="p">])</span>
+                            <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                            <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span>
+                            <span class="n">Rjb</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                            <span class="c1">#################################</span>
+                            <span class="c1"># Compute Rx and Ry</span>
+                            <span class="n">Rx</span> <span class="o">=</span> <span class="n">xj</span>
+                            <span class="n">Ry</span><span class="p">[</span><span class="n">c1</span> <span class="o">|</span> <span class="n">c2</span> <span class="o">|</span> <span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c1</span> <span class="o">|</span> <span class="n">c2</span> <span class="o">|</span> <span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span>
+                            <span class="n">Ry</span><span class="p">[</span><span class="n">c4</span> <span class="o">|</span> <span class="n">c5</span> <span class="o">|</span> <span class="n">c6</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">Ry</span><span class="p">[</span><span class="n">c7</span> <span class="o">|</span> <span class="n">c8</span> <span class="o">|</span> <span class="n">c9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yi</span><span class="p">[</span><span class="n">c7</span> <span class="o">|</span> <span class="n">c8</span> <span class="o">|</span> <span class="n">c9</span><span class="p">])</span>
+                            <span class="c1">#################################</span>
+                            <span class="c1"># Compute Rrup prime, then Rrup</span>
+                            <span class="c1"># using Kaklamanos eqns</span>
+                            <span class="k">if</span> <span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+                                <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rjb</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                                <span class="n">r1</span> <span class="o">=</span> <span class="n">Rx</span> <span class="o">&lt;</span> <span class="n">tmp</span>
+                                <span class="n">Rrupp</span><span class="p">[</span><span class="n">r1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rx</span><span class="p">[</span><span class="n">r1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                                <span class="n">r2</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">&lt;=</span> <span class="n">Rx</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                    <span class="p">(</span><span class="n">Rx</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
+                                <span class="n">Rrupp</span><span class="p">[</span><span class="n">r2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rx</span><span class="p">[</span><span class="n">r2</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">+</span> \
+                                    <span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                                <span class="n">r3</span> <span class="o">=</span> <span class="n">Rx</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                                <span class="n">Rrupp</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Rx</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">-</span>
+                                    <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">+</span>
+                                    <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+                            <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rrupp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ry</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                            <span class="n">Rrup2</span> <span class="o">=</span> <span class="n">Rrup</span> <span class="o">*</span> <span class="n">Rrup</span>
+
+                            <span class="n">integrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rrup</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                            <span class="n">integrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rrup2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+
+                        <span class="n">integrand_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ll</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                        <span class="n">integrand_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ll</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_y2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">dx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">integrand_depth</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">integrand_depth2</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_x2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">integrand_depth</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_x</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+                        <span class="n">integrand_depth2</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_x2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+                <span class="c1"># end z loop</span>
+                <span class="k">if</span> <span class="n">dz</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">integrand_dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_depth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">integrand_dip2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_depth2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">integrand_dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ztormax</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_depth</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dz</span><span class="p">)</span>
+                    <span class="n">integrand_dip2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_ztormax</span> <span class="o">*</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_depth2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dz</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">integrand_length</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_dip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">integrand_length2</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_dip2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integrand_length</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_dip</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+                <span class="n">integrand_length2</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand_dip2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nw</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">integrand_width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">integrand_width2</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">integrand_length2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">integrand_width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_length</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+            <span class="n">integrand_width2</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_length2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nw</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Rrup_avg</span> <span class="o">=</span> <span class="n">integrand_width</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Rrup_var</span> <span class="o">=</span> <span class="n">integrand_width2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rrup_avg</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rrup_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_width</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+        <span class="n">Rrup_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">integrand_width2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">Rrup_avg</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">Rrup_var</span><span class="p">,</span> <span class="n">Rrup_avg</span></div>
+
+
+<div class="viewcode-block" id="single_event_inner_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.single_event_inner_loop">[docs]</a><span class="k">def</span> <span class="nf">single_event_inner_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">Repi</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ntheta</span><span class="o">=</span><span class="mi">73</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        conf (ConfigObj): The configuration object. See single_event_loop</span>
+<span class="sd">            for a list of parameters.</span>
+<span class="sd">        Repi (float): Epicentral distance (km).</span>
+<span class="sd">        theta (float): Source-to-site angle (radians).</span>
+<span class="sd">        ntheta (int): Number of integration steps for theta; used if `bytheta`</span>
+<span class="sd">            is True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Rrup variance, Rrup mean, Rjb variance, Rjb mean</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+        <span class="n">ddip</span> <span class="o">=</span> <span class="n">dip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dipnorm</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">]])</span>
+
+    <span class="n">length</span><span class="p">,</span> <span class="n">sig_length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">sigw</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">sig_area</span> <span class="o">=</span> \
+        <span class="n">dimensions_from_magnitude</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;rup_dim_model&#39;</span><span class="p">],</span>
+                                  <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mech&#39;</span><span class="p">])</span>
+<span class="c1">#    area = area[0]  # fix dimensions</span>
+
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">ntheta</span><span class="p">)</span>  <span class="c1"># in rad</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">one_over_2pi</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="n">compute_epsilon</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">])</span>
+
+    <span class="n">RrupIntegrand_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">RrupIntegrand_a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">RrupIntegrand_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">RrupIntegrand_d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">RrupIntegrand_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RrupIntegrand_y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RrupIntegrand_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RrupIntegrand_x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+
+    <span class="n">RjbIntegrand_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">RjbIntegrand_a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">RjbIntegrand_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">RjbIntegrand_d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">])</span>
+    <span class="n">RjbIntegrand_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RjbIntegrand_y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RjbIntegrand_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+    <span class="n">RjbIntegrand_x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">])</span>
+
+    <span class="n">Rjb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntheta</span><span class="p">)</span>
+    <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntheta</span><span class="p">)</span>
+    <span class="n">Rrupp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntheta</span><span class="p">)</span>
+    <span class="n">Ry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ntheta</span><span class="p">)</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]):</span>  <span class="c1"># area</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">area</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">/</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;AR&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]):</span>  <span class="c1"># dip</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">ZW</span> <span class="o">=</span> <span class="n">W</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>  <span class="c1"># vertical projection of W</span>
+                <span class="c1"># Overwrite W if it extends too far and recompute SW, x, dx</span>
+                <span class="n">Ztor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;zhyp&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">ZW</span><span class="p">,</span>
+                                        <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;min_seis_depth&#39;</span><span class="p">]]))</span>
+                <span class="n">Zbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;zhyp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ZW</span><span class="p">,</span>
+                                        <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]]))</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="p">(</span><span class="n">Zbor</span> <span class="o">-</span> <span class="n">Ztor</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Ztor</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;zhyp&#39;</span><span class="p">]</span>
+
+            <span class="n">L</span> <span class="o">=</span> <span class="n">area</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">/</span><span class="n">W</span>
+            <span class="n">SW</span> <span class="o">=</span> <span class="n">W</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SW</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">one_over_L</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">L</span>
+            <span class="n">one_over_sw</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SW</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nx</span><span class="p">):</span>  <span class="c1"># x</span>
+                <span class="n">xj</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                <span class="n">xltz</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                <span class="n">xgez_and_xlesw</span> <span class="o">=</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xj</span> <span class="o">&lt;=</span> <span class="n">SW</span><span class="p">)</span>
+                <span class="n">xgtsw</span> <span class="o">=</span> <span class="n">xj</span> <span class="o">&gt;</span> <span class="n">SW</span>
+                <span class="n">c1x</span> <span class="o">=</span> <span class="n">xltz</span>
+                <span class="n">c2x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                <span class="n">c3x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                <span class="n">c4x</span> <span class="o">=</span> <span class="n">xltz</span>
+                <span class="n">c5x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                <span class="n">c6x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                <span class="n">c7x</span> <span class="o">=</span> <span class="n">xltz</span>
+                <span class="n">c8x</span> <span class="o">=</span> <span class="n">xgez_and_xlesw</span>
+                <span class="n">c9x</span> <span class="o">=</span> <span class="n">xgtsw</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ny</span><span class="p">):</span>
+                    <span class="n">yi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">Repi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+                    <span class="n">cca</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&gt;</span> <span class="n">L</span>
+                    <span class="n">ccb</span> <span class="o">=</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">yi</span> <span class="o">&lt;=</span> <span class="n">L</span><span class="p">)</span>
+                    <span class="n">ccc</span> <span class="o">=</span> <span class="n">yi</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                    <span class="n">c1</span> <span class="o">=</span> <span class="n">c1x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                    <span class="n">c2</span> <span class="o">=</span> <span class="n">c2x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                    <span class="n">c3</span> <span class="o">=</span> <span class="n">c3x</span> <span class="o">&amp;</span> <span class="n">cca</span>
+                    <span class="n">c4</span> <span class="o">=</span> <span class="n">c4x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                    <span class="n">c5</span> <span class="o">=</span> <span class="n">c5x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                    <span class="n">c6</span> <span class="o">=</span> <span class="n">c6x</span> <span class="o">&amp;</span> <span class="n">ccb</span>
+                    <span class="n">c7</span> <span class="o">=</span> <span class="n">c7x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                    <span class="n">c8</span> <span class="o">=</span> <span class="n">c8x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                    <span class="n">c9</span> <span class="o">=</span> <span class="n">c9x</span> <span class="o">&amp;</span> <span class="n">ccc</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span>
+                    <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                    <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xj</span><span class="p">[</span><span class="n">c4</span><span class="p">])</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c6</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                    <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c7</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c8</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yi</span><span class="p">[</span><span class="n">c8</span><span class="p">])</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">xj</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">-</span> <span class="n">SW</span>
+                    <span class="n">yy</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span>
+                    <span class="n">Rjb</span><span class="p">[</span><span class="n">c9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xx</span><span class="o">*</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span><span class="o">*</span><span class="n">yy</span><span class="p">)</span>
+                    <span class="c1"># Compute Rx and Ry</span>
+                    <span class="n">Rx</span> <span class="o">=</span> <span class="n">xj</span>
+                    <span class="n">Ry</span><span class="p">[</span><span class="n">c1</span> <span class="o">|</span> <span class="n">c2</span> <span class="o">|</span> <span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">yi</span><span class="p">[</span><span class="n">c1</span> <span class="o">|</span> <span class="n">c2</span> <span class="o">|</span> <span class="n">c3</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span>
+                    <span class="n">Ry</span><span class="p">[</span><span class="n">c4</span> <span class="o">|</span> <span class="n">c5</span> <span class="o">|</span> <span class="n">c6</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">Ry</span><span class="p">[</span><span class="n">c7</span> <span class="o">|</span> <span class="n">c8</span> <span class="o">|</span> <span class="n">c9</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">yi</span><span class="p">[</span><span class="n">c7</span> <span class="o">|</span> <span class="n">c8</span> <span class="o">|</span> <span class="n">c9</span><span class="p">])</span>
+                    <span class="c1"># Compute Rrup prime, then Rrup</span>
+                    <span class="c1"># using Kaklamanos eqns</span>
+                    <span class="k">if</span> <span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+                        <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rjb</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ztor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ztor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                        <span class="n">r1</span> <span class="o">=</span> <span class="n">Rx</span> <span class="o">&lt;</span> <span class="n">tmp</span>
+                        <span class="n">Rrupp</span><span class="p">[</span><span class="n">r1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rx</span><span class="p">[</span><span class="n">r1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ztor</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                        <span class="n">r2</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">&lt;=</span> <span class="n">Rx</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Rx</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">W</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
+                        <span class="n">Rrupp</span><span class="p">[</span><span class="n">r2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rx</span><span class="p">[</span><span class="n">r2</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">+</span> <span class="n">Ztor</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                        <span class="n">r3</span> <span class="o">=</span> <span class="n">Rx</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">W</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                        <span class="n">Rrupp</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Rx</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">-</span> <span class="n">W</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                                            <span class="p">(</span><span class="n">Ztor</span> <span class="o">+</span> <span class="n">W</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+                    <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rrupp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ry</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">Rrup2</span> <span class="o">=</span> <span class="n">Rrup</span> <span class="o">*</span> <span class="n">Rrup</span>
+                    <span class="n">Rjb2</span> <span class="o">=</span> <span class="n">Rjb</span> <span class="o">*</span> <span class="n">Rjb</span>
+                    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                        <span class="n">RrupIntegrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rrup</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                        <span class="n">RrupIntegrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rrup2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                        <span class="n">RjbIntegrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                        <span class="n">RjbIntegrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_2pi</span> <span class="o">*</span> \
+                            <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">Rjb2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">RrupIntegrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rrup</span>
+                        <span class="n">RrupIntegrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rrup2</span>
+                        <span class="n">RjbIntegrand_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rjb</span>
+                        <span class="n">RjbIntegrand_y2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rjb2</span>
+
+                <span class="n">RrupIntegrand_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_L</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                <span class="n">RrupIntegrand_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_L</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_y2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                <span class="n">RjbIntegrand_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_L</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+                <span class="n">RjbIntegrand_x2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_L</span> <span class="o">*</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_y2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dy</span><span class="p">)</span>
+
+            <span class="n">RrupIntegrand_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_x</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">RrupIntegrand_d2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_x2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">RjbIntegrand_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_x</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">RjbIntegrand_d2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_over_sw</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_x2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">RrupIntegrand_a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">RrupIntegrand_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">RrupIntegrand_a2</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">RrupIntegrand_d2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">RjbIntegrand_a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">RjbIntegrand_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">RjbIntegrand_a2</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">RjbIntegrand_d2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">RrupIntegrand_a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_d</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+            <span class="n">RrupIntegrand_a2</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RrupIntegrand_d2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+            <span class="n">RjbIntegrand_a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_d</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+            <span class="n">RjbIntegrand_a2</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dipnorm</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">RjbIntegrand_d2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">ddip</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Rrup_avg</span> <span class="o">=</span> <span class="n">RrupIntegrand_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Rrup_var</span> <span class="o">=</span> <span class="n">RrupIntegrand_a2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rrup_avg</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">Rjb_avg</span> <span class="o">=</span> <span class="n">RjbIntegrand_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Rjb_var</span> <span class="o">=</span> <span class="n">RjbIntegrand_a2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rjb_avg</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rrup_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">RrupIntegrand_a</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+        <span class="n">Rrup_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">RrupIntegrand_a2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">Rrup_avg</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">Rjb_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">RjbIntegrand_a</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span>
+        <span class="n">Rjb_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">peps</span><span class="o">*</span><span class="n">RjbIntegrand_a2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">d_eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">Rjb_avg</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">Rrup_var</span><span class="p">,</span> <span class="n">Rrup_avg</span><span class="p">,</span> <span class="n">Rjb_var</span><span class="p">,</span> <span class="n">Rjb_avg</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">ps2ff</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">ps2ff</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Eric Thompson, Bruce Worden.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

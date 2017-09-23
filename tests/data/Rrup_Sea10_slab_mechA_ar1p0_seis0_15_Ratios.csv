@@ -1,9 +1,9 @@
-# Program: /Users/emthompson/miniconda3/envs/ps2ff/bin/run_ps2ff
+# Program: bin/run_ps2ff
 # Config file: tests/config/fast_rrup_Sea10_slab.ini
-# Process start: 2017-09-11T10:46:33.883997
-# Process finish: 2017-09-11T10:46:34.062300
+# Process start: 2017-09-22T13:10:14.574344
+# Process finish: 2017-09-22T13:10:14.733839
 # rup_dim_model = Sea10_slab, mech = A, LW = False, AR = 1.0, ndip = 3, mindip = 0.000000, maxdip = 1.570796, ntheta = 4, nxny = 3
 # neps = 3, trunc = 2.500000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
 "Repi_km","R6.5","R7","R7.5"
-10.000000,0.876838,0.759943,0.759943
-100.000000,0.894535,0.804421,0.696036
+10.000000,0.895821,0.894179,0.894179
+100.000000,0.894693,0.805602,0.697566

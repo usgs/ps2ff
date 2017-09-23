@@ -1,0 +1,183 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ps2ff.config &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ps2ff.constants" href="ps2ff.constants.html" />
+    <link rel="prev" title="ps2ff" href="ps2ff.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-ps2ff.config">
+<span id="ps2ff-config"></span><h1>ps2ff.config<a class="headerlink" href="#module-ps2ff.config" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ps2ff.config.check_config">
+<code class="descclassname">ps2ff.config.</code><code class="descname">check_config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#check_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.check_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the config for sanity.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.config_error">
+<code class="descclassname">ps2ff.config.</code><code class="descname">config_error</code><span class="sig-paren">(</span><em>config</em>, <em>results</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#config_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.config_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the results of a ConfigObj validation and print the errors.
+Throws a RuntimeError exception  upon completion if any errors or 
+missing sections are encountered.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>config (ConfigObj): The ConfigObj instance representing the </dt>
+<dd>parsed config.</dd>
+</dl>
+<p class="last">results (dict): The dictionary returned by the validation of
+the ‘config’ arguments.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>(Nothing): Nothing</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.distType">
+<code class="descclassname">ps2ff.config.</code><code class="descname">distType</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#distType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.distType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the value is in the DistType enum and returns 
+the appropriate enum.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.get_configspec">
+<code class="descclassname">ps2ff.config.</code><code class="descname">get_configspec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#get_configspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.get_configspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full path to the configspec.conf file.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(str): The path to the configspec.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.get_custom_validator">
+<code class="descclassname">ps2ff.config.</code><code class="descname">get_custom_validator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#get_custom_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.get_custom_validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a validator suitable for validating the ps2ff config file.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>(<code class="xref py py-class docutils literal"><span class="pre">Validator</span></code>): A Validator object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.magScalingType">
+<code class="descclassname">ps2ff.config.</code><code class="descname">magScalingType</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#magScalingType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.magScalingType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the value is in the magScalingType enum and returns 
+the appropriate enum.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ps2ff.config.mechType">
+<code class="descclassname">ps2ff.config.</code><code class="descname">mechType</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/config.html#mechType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.config.mechType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the value is in the mechType enum and returns 
+the appropriate enum.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">ps2ff</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ps2ff.html">ps2ff</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ps2ff.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.constants.html">ps2ff.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.integration_loops.html">ps2ff.integration_loops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.interpolate.html">ps2ff.interpolate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.magnitude_scaling.html">ps2ff.magnitude_scaling</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="ps2ff.html">ps2ff</a><ul>
+      <li>Previous: <a href="ps2ff.html" title="previous chapter">ps2ff</a></li>
+      <li>Next: <a href="ps2ff.constants.html" title="next chapter">ps2ff.constants</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Eric Thompson, Bruce Worden.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/ps2ff.config.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
