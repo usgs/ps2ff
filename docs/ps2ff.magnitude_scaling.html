@@ -44,21 +44,25 @@
 <dl class="function">
 <dt id="ps2ff.magnitude_scaling.compute_epsilon">
 <code class="descclassname">ps2ff.magnitude_scaling.</code><code class="descname">compute_epsilon</code><span class="sig-paren">(</span><em>neps</em>, <em>trunc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/magnitude_scaling.html#compute_epsilon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.magnitude_scaling.compute_epsilon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute midpoints and probabilities of epsilon bins.
-:param neps: The number of steps to integrate from -trunc to +trunc.</p>
-<blockquote>
-<div>Larger numbers increase the accuracy of the result, but take
-longer to run.</div></blockquote>
+<dd><p>Compute midpoints and probabilities of epsilon bins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trunc</strong> (<em>float</em>) – For the integration in area (or length and width), trunc
-is the truncation of the normal distribution (in units of sigma).</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>neps</strong> (<em>int</em>) – The number of steps to integrate from -trunc to +trunc.
+Larger numbers increase the accuracy of the result, but take
+longer to run.</li>
+<li><strong>trunc</strong> (<em>float</em>) – For the integration in area (or length and width), trunc
+is the truncation of the normal distribution (in units of sigma).</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">epsilon midpoints, their probabilities, bin width.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">epsilon midpoints, their probabilities, bin width.</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -87,11 +91,10 @@ mechanism, used by some of the models.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A tuple containing the following, noting that some of these will</dt>
-<dd><dl class="first last docutils">
-<dt>be empty if the selected model does not provide them:</dt>
-<dd><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A tuple containing the following, noting that some of these will
+be empty if the selected model does not provide them:</p>
+<blockquote>
+<div><ul class="simple">
 <li>length: rupture length (km).</li>
 <li>sig_length: standard deviation of rupture length.</li>
 <li>W: rupture width (km).</li>
@@ -99,10 +102,7 @@ mechanism, used by some of the models.</li>
 <li>A: rupture area (km).</li>
 <li>siga: standard deivaiton of rupture area.</li>
 </ul>
-</dd>
-</dl>
-</dd>
-</dl>
+</div></blockquote>
 </p>
 </td>
 </tr>

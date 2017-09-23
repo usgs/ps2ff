@@ -20,7 +20,8 @@ def mag_dist_loop(conf, iP=None, filename=None, M=None, Repi=None):
     and writes out progress information.
 
     Args:
-        conf: The configuration info. See `ps2ff/data/configspec.conf`.
+        conf(ConfigObj): The configuration info. See
+            `ps2ff/data/configspec.conf`.
         iP (int): Multiple process index.
         filename (str): Output file name.
         M (numpy.ndarray): Earthquake magnitudes.
@@ -69,31 +70,8 @@ def single_event_loop(conf, iP=0, rjb_filename='junk',
                       rrup_filename='junk', M=6.0, Repi=None):
     """
     Args:
-        conf (ConfigObj): The configuration object. Its parameters
-            include:
-            ndip (int): Number of integration steps for dip.
-            mindip (float): The minimum rupture dip in degrees (0 to 90).
-            maxdip (float): The maximum rupture dip in degrees (0 to 90).
-            min_seis_depth (float): The minimum seismogenic depth (km).
-            max_seis_depth (float): The maximum seismogenic depth (km).
-            rup_dim_model (str): String indicating the model for compputing the
-                rupture dimensions from magnitude. Supported values are:
-                    - 'WC94'
-                    - 'S14'
-                    - 'HB08'
-                    - 'Sea10_interface'
-                    - 'Sea10_slab'
-            mech (str): Optional string indicating earthquake mechanism, used by
-                some of the models. Anything other than 'R', 'N', 'SS', or 'A'
-                (the default).
-            AR (float): Aspect ratio (length/width).
-            ntheta (int): Number of integration steps for theta.
-            nxny (int): Number of integration steps in the x and y direction.
-            zhyp (float): Epicenter depth (km).
-            bytheta (bool): Output results in theta bins.
-            neps (int): Number of integration steps for epsilon.
-            trunc (float): Epsilon truncation level.
-            NP (int): Number of forked processes.
+        conf(ConfigObj): The configuration info. See
+            `ps2ff/data/configspec.conf`.
         iP (int): Multiple process index.
         rjb_filename (str): Output file name for Rjb results.
         rrup_filename (str): Output file name for Rrup results.
@@ -199,8 +177,8 @@ def rjb_inner_loop(M, Repi, conf):
     Args:
         M (float): Earthquake magnitude.
         Repi (float): Epicentral distance (km).
-        conf (ConfigObj): Contains the configuration parameters. See
-            mag_dist_loop for a list of the parameters.
+        conf(ConfigObj): The configuration info. See
+            `ps2ff/data/configspec.conf`.
 
     Returns:
         tuple: Rjb variance, mean Rjb.
@@ -412,8 +390,8 @@ def rrup_inner_loop(M, Repi, conf):
     Args:
         M (float): Earthquake magnitude.
         Repi (float): Epicentral distance (km).
-        conf (ConfigObj): Contains the configuration parameters. See
-            mag_dist_loop for a list of the parameters.
+        conf(ConfigObj): The configuration info. See
+            `ps2ff/data/configspec.conf`.
 
     Returns:
         tuple: Rjb variance, mean Rjb.
@@ -675,8 +653,8 @@ def rrup_inner_loop(M, Repi, conf):
 def single_event_inner_loop(conf, Repi, theta=0, ntheta=73):
     """
     Args:
-        conf (ConfigObj): The configuration object. See single_event_loop
-            for a list of parameters.
+        conf(ConfigObj): The configuration info. See
+           `ps2ff/data/configspec.conf`.
         Repi (float): Epicentral distance (km).
         theta (float): Source-to-site angle (radians).
         ntheta (int): Number of integration steps for theta; used if `bytheta`

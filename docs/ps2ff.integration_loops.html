@@ -52,7 +52,8 @@ and writes out progress information.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>conf</strong> – The configuration info. See <cite>ps2ff/data/configspec.conf</cite>.</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
 <li><strong>iP</strong> (<em>int</em>) – Multiple process index.</li>
 <li><strong>filename</strong> (<em>str</em>) – Output file name.</li>
 <li><strong>M</strong> (<em>numpy.ndarray</em>) – Earthquake magnitudes.</li>
@@ -86,8 +87,8 @@ onto different cores.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>M</strong> (<em>float</em>) – Earthquake magnitude.</li>
 <li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
-<li><strong>conf</strong> (<em>ConfigObj</em>) – Contains the configuration parameters. See
-mag_dist_loop for a list of the parameters.</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -123,8 +124,8 @@ onto different cores.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>M</strong> (<em>float</em>) – Earthquake magnitude.</li>
 <li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
-<li><strong>conf</strong> (<em>ConfigObj</em>) – Contains the configuration parameters. See
-mag_dist_loop for a list of the parameters.</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -146,8 +147,8 @@ mag_dist_loop for a list of the parameters.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration object. See single_event_loop
-for a list of parameters.</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
 <li><strong>Repi</strong> (<em>float</em>) – Epicentral distance (km).</li>
 <li><strong>theta</strong> (<em>float</em>) – Source-to-site angle (radians).</li>
 <li><strong>ntheta</strong> (<em>int</em>) – Number of integration steps for theta; used if <cite>bytheta</cite>
@@ -173,41 +174,8 @@ is True.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>conf</strong> (<em>ConfigObj</em>) – <p>The configuration object. Its parameters
-include:
-ndip (int): Number of integration steps for dip.
-mindip (float): The minimum rupture dip in degrees (0 to 90).
-maxdip (float): The maximum rupture dip in degrees (0 to 90).
-min_seis_depth (float): The minimum seismogenic depth (km).
-max_seis_depth (float): The maximum seismogenic depth (km).
-rup_dim_model (str): String indicating the model for compputing the</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>rupture dimensions from magnitude. Supported values are:</dt>
-<dd><ul class="first last">
-<li>’WC94’</li>
-<li>’S14’</li>
-<li>’HB08’</li>
-<li>’Sea10_interface’</li>
-<li>’Sea10_slab’</li>
-</ul>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>mech (str): Optional string indicating earthquake mechanism, used by</dt>
-<dd>some of the models. Anything other than ‘R’, ‘N’, ‘SS’, or ‘A’
-(the default).</dd>
-</dl>
-<p>AR (float): Aspect ratio (length/width).
-ntheta (int): Number of integration steps for theta.
-nxny (int): Number of integration steps in the x and y direction.
-zhyp (float): Epicenter depth (km).
-bytheta (bool): Output results in theta bins.
-neps (int): Number of integration steps for epsilon.
-trunc (float): Epsilon truncation level.
-NP (int): Number of forked processes.</p>
-</li>
+<li><strong>conf</strong> (<em>ConfigObj</em>) – The configuration info. See
+<cite>ps2ff/data/configspec.conf</cite>.</li>
 <li><strong>iP</strong> (<em>int</em>) – Multiple process index.</li>
 <li><strong>rjb_filename</strong> (<em>str</em>) – Output file name for Rjb results.</li>
 <li><strong>rrup_filename</strong> (<em>str</em>) – Output file name for Rrup results.</li>

@@ -61,7 +61,8 @@
 <span class="sd">    and writes out progress information.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        conf: The configuration info. See `ps2ff/data/configspec.conf`.</span>
+<span class="sd">        conf(ConfigObj): The configuration info. See</span>
+<span class="sd">            `ps2ff/data/configspec.conf`.</span>
 <span class="sd">        iP (int): Multiple process index.</span>
 <span class="sd">        filename (str): Output file name.</span>
 <span class="sd">        M (numpy.ndarray): Earthquake magnitudes.</span>
@@ -110,31 +111,8 @@
                       <span class="n">rrup_filename</span><span class="o">=</span><span class="s1">&#39;junk&#39;</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">Repi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
-<span class="sd">        conf (ConfigObj): The configuration object. Its parameters</span>
-<span class="sd">            include:</span>
-<span class="sd">            ndip (int): Number of integration steps for dip.</span>
-<span class="sd">            mindip (float): The minimum rupture dip in degrees (0 to 90).</span>
-<span class="sd">            maxdip (float): The maximum rupture dip in degrees (0 to 90).</span>
-<span class="sd">            min_seis_depth (float): The minimum seismogenic depth (km).</span>
-<span class="sd">            max_seis_depth (float): The maximum seismogenic depth (km).</span>
-<span class="sd">            rup_dim_model (str): String indicating the model for compputing the</span>
-<span class="sd">                rupture dimensions from magnitude. Supported values are:</span>
-<span class="sd">                    - &#39;WC94&#39;</span>
-<span class="sd">                    - &#39;S14&#39;</span>
-<span class="sd">                    - &#39;HB08&#39;</span>
-<span class="sd">                    - &#39;Sea10_interface&#39;</span>
-<span class="sd">                    - &#39;Sea10_slab&#39;</span>
-<span class="sd">            mech (str): Optional string indicating earthquake mechanism, used by</span>
-<span class="sd">                some of the models. Anything other than &#39;R&#39;, &#39;N&#39;, &#39;SS&#39;, or &#39;A&#39;</span>
-<span class="sd">                (the default).</span>
-<span class="sd">            AR (float): Aspect ratio (length/width).</span>
-<span class="sd">            ntheta (int): Number of integration steps for theta.</span>
-<span class="sd">            nxny (int): Number of integration steps in the x and y direction.</span>
-<span class="sd">            zhyp (float): Epicenter depth (km).</span>
-<span class="sd">            bytheta (bool): Output results in theta bins.</span>
-<span class="sd">            neps (int): Number of integration steps for epsilon.</span>
-<span class="sd">            trunc (float): Epsilon truncation level.</span>
-<span class="sd">            NP (int): Number of forked processes.</span>
+<span class="sd">        conf(ConfigObj): The configuration info. See</span>
+<span class="sd">            `ps2ff/data/configspec.conf`.</span>
 <span class="sd">        iP (int): Multiple process index.</span>
 <span class="sd">        rjb_filename (str): Output file name for Rjb results.</span>
 <span class="sd">        rrup_filename (str): Output file name for Rrup results.</span>
@@ -240,8 +218,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        M (float): Earthquake magnitude.</span>
 <span class="sd">        Repi (float): Epicentral distance (km).</span>
-<span class="sd">        conf (ConfigObj): Contains the configuration parameters. See</span>
-<span class="sd">            mag_dist_loop for a list of the parameters.</span>
+<span class="sd">        conf(ConfigObj): The configuration info. See</span>
+<span class="sd">            `ps2ff/data/configspec.conf`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: Rjb variance, mean Rjb.</span>
@@ -453,8 +431,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        M (float): Earthquake magnitude.</span>
 <span class="sd">        Repi (float): Epicentral distance (km).</span>
-<span class="sd">        conf (ConfigObj): Contains the configuration parameters. See</span>
-<span class="sd">            mag_dist_loop for a list of the parameters.</span>
+<span class="sd">        conf(ConfigObj): The configuration info. See</span>
+<span class="sd">            `ps2ff/data/configspec.conf`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: Rjb variance, mean Rjb.</span>
@@ -716,8 +694,8 @@
 <div class="viewcode-block" id="single_event_inner_loop"><a class="viewcode-back" href="../../ps2ff.integration_loops.html#ps2ff.integration_loops.single_event_inner_loop">[docs]</a><span class="k">def</span> <span class="nf">single_event_inner_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">Repi</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ntheta</span><span class="o">=</span><span class="mi">73</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
-<span class="sd">        conf (ConfigObj): The configuration object. See single_event_loop</span>
-<span class="sd">            for a list of parameters.</span>
+<span class="sd">        conf(ConfigObj): The configuration info. See</span>
+<span class="sd">           `ps2ff/data/configspec.conf`.</span>
 <span class="sd">        Repi (float): Epicentral distance (km).</span>
 <span class="sd">        theta (float): Source-to-site angle (radians).</span>
 <span class="sd">        ntheta (int): Number of integration steps for theta; used if `bytheta`</span>

@@ -67,7 +67,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: A tuple containing the following, noting that some of these will</span>
-<span class="sd">            be empty if the selected model does not provide them:</span>
+<span class="sd">        be empty if the selected model does not provide them:</span>
 <span class="sd">                - length: rupture length (km).</span>
 <span class="sd">                - sig_length: standard deviation of rupture length.</span>
 <span class="sd">                - W: rupture width (km).</span>
@@ -185,6 +185,7 @@
 <div class="viewcode-block" id="compute_epsilon"><a class="viewcode-back" href="../../ps2ff.magnitude_scaling.html#ps2ff.magnitude_scaling.compute_epsilon">[docs]</a><span class="k">def</span> <span class="nf">compute_epsilon</span><span class="p">(</span><span class="n">neps</span><span class="p">,</span> <span class="n">trunc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute midpoints and probabilities of epsilon bins.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        neps (int): The number of steps to integrate from -trunc to +trunc.</span>
 <span class="sd">            Larger numbers increase the accuracy of the result, but take</span>
