@@ -47,6 +47,7 @@
 <span class="kn">from</span> <span class="nn">configobj</span> <span class="k">import</span> <span class="n">ConfigObj</span><span class="p">,</span> <span class="n">flatten_errors</span>
 <span class="kn">from</span> <span class="nn">validate</span> <span class="k">import</span> <span class="n">Validator</span><span class="p">,</span> <span class="n">ValidateError</span>
 
+
 <div class="viewcode-block" id="get_configspec"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.get_configspec">[docs]</a><span class="k">def</span> <span class="nf">get_configspec</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the full path to the configspec.conf file.</span>
@@ -57,6 +58,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;ps2ff&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">),</span>
                         <span class="s1">&#39;configspec.conf&#39;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="get_custom_validator"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.get_custom_validator">[docs]</a><span class="k">def</span> <span class="nf">get_custom_validator</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -74,17 +76,18 @@
     <span class="n">validator</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">fdict</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">validator</span></div>
 
+
 <div class="viewcode-block" id="config_error"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.config_error">[docs]</a><span class="k">def</span> <span class="nf">config_error</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse the results of a ConfigObj validation and print the errors.</span>
-<span class="sd">    Throws a RuntimeError exception  upon completion if any errors or </span>
+<span class="sd">    Throws a RuntimeError exception  upon completion if any errors or</span>
 <span class="sd">    missing sections are encountered.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        config (ConfigObj): The ConfigObj instance representing the </span>
+<span class="sd">        config (ConfigObj): The ConfigObj instance representing the</span>
 <span class="sd">            parsed config.</span>
 <span class="sd">        results (dict): The dictionary returned by the validation of</span>
-<span class="sd">        the &#39;config&#39; arguments.</span>
+<span class="sd">            the &#39;config&#39; arguments.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (Nothing): Nothing</span>
@@ -94,16 +97,17 @@
     <span class="k">for</span> <span class="p">(</span><span class="n">section_list</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">flatten_errors</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The &quot;</span><span class="si">%s</span><span class="s1">&quot; key in the section &quot;</span><span class="si">%s</span><span class="s1">&quot; failed validation&#39;</span> <span class="o">%</span>
-                    <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section_list</span><span class="p">)))</span>
+                  <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section_list</span><span class="p">)))</span>
             <span class="n">errs</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The following section was missing:</span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span>
-                    <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section_list</span><span class="p">))</span>
+                  <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section_list</span><span class="p">))</span>
             <span class="n">errs</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">errs</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;There </span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> in configuration.&#39;</span> <span class="o">%</span>
-                    <span class="p">(</span><span class="s1">&#39;was&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;were&#39;</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span>
-                     <span class="s1">&#39;error&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;errors&#39;</span><span class="p">))</span></div>
+                           <span class="p">(</span><span class="s1">&#39;was&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;were&#39;</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span>
+                            <span class="s1">&#39;error&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;errors&#39;</span><span class="p">))</span></div>
+
 
 <div class="viewcode-block" id="check_config"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.check_config">[docs]</a><span class="k">def</span> <span class="nf">check_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -128,9 +132,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: minepi == maxepi, but nepi != 1&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
 
+
 <div class="viewcode-block" id="distType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.distType">[docs]</a><span class="k">def</span> <span class="nf">distType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks that the value is in the DistType enum and returns </span>
+<span class="sd">    Checks that the value is in the DistType enum and returns</span>
 <span class="sd">    the appropriate enum.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -140,13 +145,14 @@
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">thing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">thing</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: Invalid value &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;what&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;what&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> 
-         <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">DistType</span><span class="p">)]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;what&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+          <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">DistType</span><span class="p">)]))</span>
     <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="magScalingType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.magScalingType">[docs]</a><span class="k">def</span> <span class="nf">magScalingType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks that the value is in the magScalingType enum and returns </span>
+<span class="sd">    Checks that the value is in the magScalingType enum and returns</span>
 <span class="sd">    the appropriate enum.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -156,13 +162,14 @@
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">thing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">thing</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: Invalid value &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;rup_dim_model&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;rup_dim_model&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> 
-         <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">MagScaling</span><span class="p">)]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;rup_dim_model&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+          <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">MagScaling</span><span class="p">)]))</span>
     <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="mechType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.mechType">[docs]</a><span class="k">def</span> <span class="nf">mechType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks that the value is in the mechType enum and returns </span>
+<span class="sd">    Checks that the value is in the mechType enum and returns</span>
 <span class="sd">    the appropriate enum.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -172,8 +179,8 @@
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">thing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">thing</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: Invalid value &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;mech&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;mech&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> 
-         <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Mechanism</span><span class="p">)]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;mech&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+          <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Mechanism</span><span class="p">)]))</span>
     <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
 </pre></div>
 
