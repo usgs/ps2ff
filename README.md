@@ -3,7 +3,7 @@ ps2ff
 [![Build Status](https://travis-ci.org/usgs/ps2ff.svg?branch=master)](https://travis-ci.org/usgs/ps2ff)
 [![codecov](https://codecov.io/gh/usgs/ps2ff/branch/master/graph/badge.svg)](https://codecov.io/gh/usgs/ps2ff)
 
-<img align="left" height="75" src="ps2ff/data/ps2ff.png">
+<img align="left" height="70" src="ps2ff/data/ps2ff.png">
 Produce approximated finite fault distances and variance corrections given
 point source information (e.g., Repi (epcentral distance) to Rjb (Joyner-Boore
 distance) or Rrup (closest distance to rupture).
