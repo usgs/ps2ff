@@ -92,7 +92,12 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'logo': 'ps2ff_wide.png',
+    'show_powered_by': False,
+    'fixed_sidebar': True,
+    'sidebar_collapse': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -113,6 +118,10 @@ html_sidebars = {
         'donate.html',
     ]
 }
+
+html_show_sourcelink = False
+html_show_sphinx = False
+html_show_copyright = False
 
 
 # -- Options for HTMLHelp output ------------------------------------------
