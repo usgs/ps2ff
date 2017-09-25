@@ -10,7 +10,8 @@ Welcome to ps2ff's documentation!
    :maxdepth: 12
    :caption: Contents:
 
-   ps2ff
+   API <ps2ff>
+   Command Line Interface <programs.rst>
 
 
 Indices and tables

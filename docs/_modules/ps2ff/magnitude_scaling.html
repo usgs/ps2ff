@@ -21,6 +21,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -39,6 +40,8 @@
   <a href="../../index.html">
     <img class="logo" src="../../_static/ps2ff_wide.png" alt="Logo"/>
     
+    <h1 class="logo logo-name">ps2ff</h1>
+    
   </a>
 </p>
 
@@ -52,7 +55,8 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">ps2ff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Command Line Interface</a></li>
 </ul>
 
 <div class="relations">
@@ -110,12 +114,14 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: A tuple containing the following, noting that some of these will</span>
 <span class="sd">        be empty if the selected model does not provide them:</span>
+
 <span class="sd">                - length: rupture length (km).</span>
 <span class="sd">                - sig_length: standard deviation of rupture length.</span>
 <span class="sd">                - W: rupture width (km).</span>
 <span class="sd">                - sigw: standard devation of rupture width.</span>
 <span class="sd">                - A: rupture area (km).</span>
 <span class="sd">                - siga: standard deivaiton of rupture area.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">epsmid</span><span class="p">,</span> <span class="n">peps</span><span class="p">,</span> <span class="n">d_eps</span> <span class="o">=</span> <span class="n">compute_epsilon</span><span class="p">(</span><span class="n">neps</span><span class="p">,</span> <span class="n">trunc</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rup_dim_model</span><span class="p">,</span> <span class="n">MagScaling</span><span class="p">):</span>

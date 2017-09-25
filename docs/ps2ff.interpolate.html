@@ -21,6 +21,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ps2ff.magnitude_scaling" href="ps2ff.magnitude_scaling.html" />
@@ -41,6 +42,8 @@
   <a href="index.html">
     <img class="logo" src="_static/ps2ff_wide.png" alt="Logo"/>
     
+    <h1 class="logo logo-name">ps2ff</h1>
+    
   </a>
 </p>
 
@@ -54,7 +57,7 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="ps2ff.html">ps2ff</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ps2ff.html">API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="ps2ff.config.html">ps2ff.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ps2ff.constants.html">ps2ff.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ps2ff.integration_loops.html">ps2ff.integration_loops</a></li>
@@ -62,6 +65,7 @@
 <li class="toctree-l2"><a class="reference internal" href="ps2ff.magnitude_scaling.html">ps2ff.magnitude_scaling</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Command Line Interface</a></li>
 </ul>
 
 <div class="relations">
@@ -108,7 +112,7 @@ without a rupture Bull. Seism. Soc. Am. (in press).</li>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="ps2ff.interpolate.PS2FF.files">
-<code class="descname">files</code><span class="sig-paren">(</span><em>this</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.files" title="Permalink to this definition">¶</a></dt>
+<code class="descname">files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the table files that were used to construct this
 object.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -215,7 +219,7 @@ in the ps2ff package.</td>
 
 <dl class="method">
 <dt id="ps2ff.interpolate.PS2FF.r2r">
-<code class="descname">r2r</code><span class="sig-paren">(</span><em>this</em>, <em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.r2r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.r2r" title="Permalink to this definition">¶</a></dt>
+<code class="descname">r2r</code><span class="sig-paren">(</span><em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.r2r"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.r2r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert point distances to the equivalent average finite rupture
 distances, based on the parameters specified when creating this
 object.</p>
@@ -248,7 +252,7 @@ magnitudes.</li>
 
 <dl class="method">
 <dt id="ps2ff.interpolate.PS2FF.rat">
-<code class="descname">rat</code><span class="sig-paren">(</span><em>this</em>, <em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.rat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.rat" title="Permalink to this definition">¶</a></dt>
+<code class="descname">rat</code><span class="sig-paren">(</span><em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.rat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.rat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return ratios needed to convert point distances to the equivalent
 average finite rupture distances, based on the parameters specified
 when creating this object.</p>
@@ -282,7 +286,7 @@ average finite rupture distance.</p>
 
 <dl class="method">
 <dt id="ps2ff.interpolate.PS2FF.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>this</em>, <em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">var</code><span class="sig-paren">(</span><em>r</em>, <em>M</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/interpolate.html#PS2FF.var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.interpolate.PS2FF.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the additional variance from the uncertainty in
 point distances vis a vis finite rupture distance.</p>
 <table class="docutils field-list" frame="void" rules="none">

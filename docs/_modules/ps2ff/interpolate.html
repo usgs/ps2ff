@@ -21,6 +21,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -39,6 +40,8 @@
   <a href="../../index.html">
     <img class="logo" src="../../_static/ps2ff_wide.png" alt="Logo"/>
     
+    <h1 class="logo logo-name">ps2ff</h1>
+    
   </a>
 </p>
 
@@ -52,7 +55,8 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">ps2ff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Command Line Interface</a></li>
 </ul>
 
 <div class="relations">
@@ -85,6 +89,7 @@
 <span class="sd">PS2FF class for converting point distances (epicentral or hypocentral)</span>
 <span class="sd">to equivalent average finite rupture distances (Rjb or Rrup). Based</span>
 <span class="sd">upon:</span>
+
 <span class="sd">   - Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances</span>
 <span class="sd">     without a rupture Bull. Seism. Soc. Am. (in press).</span>
 
@@ -103,7 +108,7 @@
 
 <div class="viewcode-block" id="PS2FF"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF">[docs]</a><span class="k">class</span> <span class="nc">PS2FF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="PS2FF.fromParams"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.fromParams">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromParams</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="n">DistType</span><span class="o">.</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">mag_scaling</span><span class="o">=</span><span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">fromParams</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="n">DistType</span><span class="o">.</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">mag_scaling</span><span class="o">=</span><span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">,</span>
                    <span class="n">mechanism</span><span class="o">=</span><span class="n">Mechanism</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">AR</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">min_seis_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                    <span class="n">max_seis_depth</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -154,12 +159,12 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: could not find file with the supplied parameters&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File not found: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The available files are:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
+                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PS2FF.fromFile"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.fromFile">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a PS2FF object from a file specification. The file must</span>
 <span class="sd">        exist in the ps2ff tables.</span>
@@ -175,13 +180,13 @@
 <span class="sd">            (PS2FF): An object of the PS2FF class initialized with</span>
 <span class="sd">            the tables corresponding to the rfile argument.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">this</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
         <span class="n">datadir</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;ps2ff&#39;</span><span class="p">,</span> <span class="s1">&#39;tables&#39;</span><span class="p">)</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="n">rfile</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File not found: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The available files are:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
+                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
 
         <span class="n">r2r_ratios_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
@@ -198,7 +203,7 @@
 
         <span class="n">r2r_ratios_grid</span> <span class="o">=</span> <span class="n">r2r_ratios_tbl</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
 
-        <span class="n">this</span><span class="o">.</span><span class="n">r2r_ratios_obj</span> <span class="o">=</span> <span class="n">spint</span><span class="o">.</span><span class="n">RectBivariateSpline</span><span class="p">(</span><span class="n">dist_list</span><span class="p">,</span> <span class="n">mag_list</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2r_ratios_obj</span> <span class="o">=</span> <span class="n">spint</span><span class="o">.</span><span class="n">RectBivariateSpline</span><span class="p">(</span><span class="n">dist_list</span><span class="p">,</span> <span class="n">mag_list</span><span class="p">,</span>
                                                         <span class="n">r2r_ratios_grid</span><span class="p">,</span>
                                                         <span class="n">kx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ky</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -206,14 +211,14 @@
         <span class="n">r2r_var_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">varfile</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
 
         <span class="n">r2r_var_grid</span> <span class="o">=</span> <span class="n">r2r_var_tbl</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
-        <span class="n">this</span><span class="o">.</span><span class="n">r2r_var_obj</span> <span class="o">=</span> <span class="n">spint</span><span class="o">.</span><span class="n">RectBivariateSpline</span><span class="p">(</span><span class="n">dist_list</span><span class="p">,</span> <span class="n">mag_list</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2r_var_obj</span> <span class="o">=</span> <span class="n">spint</span><span class="o">.</span><span class="n">RectBivariateSpline</span><span class="p">(</span><span class="n">dist_list</span><span class="p">,</span> <span class="n">mag_list</span><span class="p">,</span>
                                                      <span class="n">r2r_var_grid</span><span class="p">,</span>
                                                      <span class="n">kx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ky</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">this</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">rfile</span>
-        <span class="n">this</span><span class="o">.</span><span class="n">vfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">varfile</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">this</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">rfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">varfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PS2FF.r2r"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.r2r">[docs]</a>    <span class="k">def</span> <span class="nf">r2r</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<div class="viewcode-block" id="PS2FF.r2r"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.r2r">[docs]</a>    <span class="k">def</span> <span class="nf">r2r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert point distances to the equivalent average finite rupture</span>
 <span class="sd">        distances, based on the parameters specified when creating this</span>
@@ -229,9 +234,9 @@
 <span class="sd">            (numpy.ndarray): An array the same shape as r, with</span>
 <span class="sd">                distances converted to average finite rupture distance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="n">this</span><span class="o">.</span><span class="n">r2r_ratios_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">r2r_ratios_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PS2FF.rat"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.rat">[docs]</a>    <span class="k">def</span> <span class="nf">rat</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<div class="viewcode-block" id="PS2FF.rat"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.rat">[docs]</a>    <span class="k">def</span> <span class="nf">rat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return ratios needed to convert point distances to the equivalent</span>
 <span class="sd">        average finite rupture distances, based on the parameters specified</span>
@@ -248,9 +253,9 @@
 <span class="sd">                the ratios (multipliers) needed to convert r to</span>
 <span class="sd">                average finite rupture distance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">r2r_ratios_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">r2r_ratios_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PS2FF.var"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<div class="viewcode-block" id="PS2FF.var"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the additional variance from the uncertainty in</span>
 <span class="sd">        point distances vis a vis finite rupture distance.</span>
@@ -266,9 +271,9 @@
 <span class="sd">            the additional variance from the uncertainty in finite</span>
 <span class="sd">            rupture distance for the distances in r.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">r2r_var_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">r2r_var_obj</span><span class="o">.</span><span class="n">ev</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">M</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PS2FF.files"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.files">[docs]</a>    <span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="n">this</span><span class="p">):</span>
+<div class="viewcode-block" id="PS2FF.files"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.files">[docs]</a>    <span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the table files that were used to construct this</span>
 <span class="sd">        object.</span>
@@ -279,10 +284,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (str, str): A tuple of the ratio file and variance file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">this</span><span class="o">.</span><span class="n">vfile</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vfile</span></div>
 
 <div class="viewcode-block" id="PS2FF.getValidFiles"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.getValidFiles">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getValidFiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getValidFiles</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of the valid conversion tables in the ps2ff</span>
 <span class="sd">        package.</span>

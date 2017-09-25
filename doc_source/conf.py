@@ -34,7 +34,8 @@
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-    'sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+    'sphinx.ext.autodoc', 'sphinx.ext.napoleon',
+    'sphinxarg.ext']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -94,10 +95,13 @@ html_theme = 'alabaster'
 #
 html_theme_options = {
     'logo': 'ps2ff_wide.png',
+    'logo_name': True,
     'show_powered_by': False,
     'fixed_sidebar': True,
     'sidebar_collapse': True,
 }
+
+html_favicon = '_static/ps2ff.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
