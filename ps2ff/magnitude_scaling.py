@@ -27,12 +27,14 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc,
     Returns:
         tuple: A tuple containing the following, noting that some of these will
         be empty if the selected model does not provide them:
+
                 - length: rupture length (km).
                 - sig_length: standard deviation of rupture length.
                 - W: rupture width (km).
                 - sigw: standard devation of rupture width.
                 - A: rupture area (km).
                 - siga: standard deivaiton of rupture area.
+
     """
     epsmid, peps, d_eps = compute_epsilon(neps, trunc)
     if not isinstance(rup_dim_model, MagScaling):

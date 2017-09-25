@@ -75,85 +75,7 @@ Program Details
 ---------------
 
 `run_ps2ff` produces tables of Rjb-to-Repi or Rrup-to-Repi ratios and
-variances. The parameters in the config file are:
-
-- `NP` The number of processors (cores) to use. Minimum 1.
-
-- `datadir` The directory into which the output files are written. If
-  unspecified, it uses `./data`.
-
-- `rup_dim_model` String to select the magnitude scaling relationship.
-    Currently supported values are:
-  - WC94: Wells, D. L., & Coppersmith, K. J. (1994). New empirical
-    relationships among magnitude, rupture length, rupture width, rupture area,
-    and surface displacement, *Bulletin of the Seismological Society of
-    America*, 84(4), 974-1002.
-  - S14: Somerville, P. (2014). Scaling Relations between Seismic Moment and
-    Rupture Area of Earthquakes in Stable Continental Regions, *PEER Report*
-    2014/14.
-  - HB08: Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for
-    recent large earthquakes, *Bulletin of the Seismological Society of
-    America*, 98(1), 490-494.
-  - Sea10_interface: Interface coefficients of Strasser, F. O., Arango,
-    M. C., & Bommer, J. J. (2010). Scaling of the source dimensions of
-    interface and intraslab subduction-zone earthquakes with moment magnitude,
-    *Seismological Research Letters*, 81(6), 941-950.
-  - Sea10_slab: Slab coefficients from the paper in previous bullet.
-
-- `mech` The rupture mechanism, only used by some scaling relationships:
-
-  - A: all/unknown mechanisms,
-  - SS: strike-slip,
-  - N: normal,
-  - R: reverse.
-
-- `LW` Boolean for whether to separately select rupture length and width
-  distributions, otherwise select the rupture area and compute length and
-  width from it and an assumed aspect ratio.
-
-- `AR` Aspect ratio (Length/Width) of the rupture. The aspect ratio is
-  maintained until the rupture width spans the seismogenic zone, after
-  which only the rupture length will increase.
-
-- `min_seis_depth` The minimum seismogenic depth (km).
-
-- `max_seis_depth` The maximum seismogenic depth (km).
-
-- `mindip_deg` The minimum rupture dip in degrees (0 min, 90 max).
-
-- `maxdip_deg` The maximum rupture dip in degrees (0 min 90 max).
-
-- `ndip` The number of integration steps in dip.
-
-- `ntheta` The number of integration steps in theta.
-
-- `nxny` The number of integration steps in x and y (minimum is 2).
-
-- `trunc` For the integration in area (or length and width), this is the
-  truncation of the normal distribution (in standard deviation units).
-
-- `neps` The number of integration steps for area (or length and width)
-  from -trunc to +trunc. Larger numbers increase the accuracy of the result,
-  but take longer to run.
-
-- `minmag` The minimum magnitude for which to compute results.
-
-- `maxmag` The maximum magnitude for which to compute results.
-
-- `dmag` The size of the steps from minmag to maxmag.
-
-- `minepi` The minimum epicentral distance for which to compute results.
-
-- `maxepi` The maximum epicentral distance for which to compute results.
-
-- `nepi` The number of steps from minepi to max epi. The steps will be
-   uniformly sized in log space.
-
-- `nz` The number of integration steps in depth for Ztor. For any given
-  rupture width and dip in the integration, Ztor ranges from
-  `(max_seis_depth - width * sin(dip))` to `min_seis_depth`. Only used for
-  if `what='Rrup'`.
-
+variances. Example configuration files may be found in ps2ff/config.
 
 `run_ps2ff_single_event` produces tables of Rrup-to-Repi and Rjb-to-Repi
 ratios and variances for a single event. This means that the magnitdue and
@@ -162,8 +84,6 @@ tabulates the adjustment factors as a function of backazimuth. An example
 configuration file for this program is given in
 `tests/config/test_single.ini`.
 
-The parameters are the same as for `run_ps2ff`, with the addition of:
-- `M` The earthquake magnitude.
-- `zhyp` The hypocentral depth of the earthquake.
-- `bytheta` Tabulate factors for bins of theta.
-
+See this package's documentation on the 
+[command line interface](<https://usgs.github.io/ps2ff/)
+for more on usage and configuration options.

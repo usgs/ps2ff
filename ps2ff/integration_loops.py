@@ -167,10 +167,12 @@ def rjb_inner_loop(M, Repi, conf):
     """
     This function evaluates the Rjb mean and var integral
     for a single M/R pair, looping over:
+    
        - dip
        - dx, dy (location of hypocenter on fault)
        - theta (angle to fault)
        - epsilon (dummy variable for L/W/A integration)
+
     We do this so that parallizaiton is simple: this function can be forked
     onto different cores.
 
@@ -380,10 +382,12 @@ def rrup_inner_loop(M, Repi, conf):
     """
     This function evaluates the Rrup mean and var integral
     for a single M/R pair, looping over:
+
        - dip
        - dx, dy (location of hypocenter on fault)
        - theta (angle to fault)
        - epsilon (dummy variable for L/W/A integration)
+
     We do this so that parallizaiton is simple: this function can be forked
     onto different cores.
 

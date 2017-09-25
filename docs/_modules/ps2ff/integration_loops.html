@@ -21,6 +21,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -39,6 +40,8 @@
   <a href="../../index.html">
     <img class="logo" src="../../_static/ps2ff_wide.png" alt="Logo"/>
     
+    <h1 class="logo logo-name">ps2ff</h1>
+    
   </a>
 </p>
 
@@ -52,7 +55,8 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">ps2ff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Command Line Interface</a></li>
 </ul>
 
 <div class="relations">
@@ -250,10 +254,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function evaluates the Rjb mean and var integral</span>
 <span class="sd">    for a single M/R pair, looping over:</span>
+<span class="sd">    </span>
 <span class="sd">       - dip</span>
 <span class="sd">       - dx, dy (location of hypocenter on fault)</span>
 <span class="sd">       - theta (angle to fault)</span>
 <span class="sd">       - epsilon (dummy variable for L/W/A integration)</span>
+
 <span class="sd">    We do this so that parallizaiton is simple: this function can be forked</span>
 <span class="sd">    onto different cores.</span>
 
@@ -463,10 +469,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function evaluates the Rrup mean and var integral</span>
 <span class="sd">    for a single M/R pair, looping over:</span>
+
 <span class="sd">       - dip</span>
 <span class="sd">       - dx, dy (location of hypocenter on fault)</span>
 <span class="sd">       - theta (angle to fault)</span>
 <span class="sd">       - epsilon (dummy variable for L/W/A integration)</span>
+
 <span class="sd">    We do this so that parallizaiton is simple: this function can be forked</span>
 <span class="sd">    onto different cores.</span>
 

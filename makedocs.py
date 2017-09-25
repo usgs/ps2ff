@@ -46,7 +46,7 @@ def main(args):
     # run the api doc command; this creates the .rst files
     #-------------------------------------------------------------
     sys.stderr.write('Building ps2ff API documentation (REST)...\n')
-    sphinx_cmd = 'sphinx-apidoc -o %s -f -e -l -d 12 -H %s -A "%s"'\
+    sphinx_cmd = 'sphinx-apidoc -o %s -f -e -l -M -d 12 -H %s -A "%s"'\
                  ' -V %s %s' % (API_DIR, PACKAGE, AUTHORS, verstr,
                                 PACKAGE_DIR)
     res, stdout, stderr = get_command_output(sphinx_cmd)

@@ -1,6 +1,11 @@
 ps2ff
 =============
 
+.. automodule:: ps2ff
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 
 .. toctree::
@@ -11,9 +16,3 @@ Submodules
    ps2ff.interpolate
    ps2ff.magnitude_scaling
 
-Module contents
-
-.. automodule:: ps2ff
-    :members:
-    :undoc-members:
-    :show-inheritance:

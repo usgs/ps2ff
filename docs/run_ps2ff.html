@@ -1,0 +1,236 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>run_ps2ff &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/ps2ff.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="run_ps2ff_single_event" href="run_ps2ff_single_event.html" />
+    <link rel="prev" title="ps2ff Programs" href="programs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/ps2ff_wide.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">ps2ff</h1>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ps2ff.html">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="programs.html">Command Line Interface</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">run_ps2ff</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="run_ps2ff_single_event.html">run_ps2ff_single_event</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="programs.html">ps2ff Programs</a><ul>
+      <li>Previous: <a href="programs.html" title="previous chapter">ps2ff Programs</a></li>
+      <li>Next: <a href="run_ps2ff_single_event.html" title="next chapter">run_ps2ff_single_event</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-ps2ff">
+<h1>run_ps2ff<a class="headerlink" href="#run-ps2ff" title="Permalink to this headline">¶</a></h1>
+<p><p><cite>run_ps2ff</cite> produces tables of Rjb-to-Repi or Rrup-to-Repi ratios and
+variances. The parameters in the config file are:</p>
+<ul>
+<li><p class="first"><cite>NP</cite> The number of processors (cores) to use. Minimum 1.</p>
+</li>
+<li><p class="first"><cite>datadir</cite> The directory into which the output files are written. If
+unspecified, it uses <cite>./data</cite>.</p>
+</li>
+<li><dl class="first docutils">
+<dt><cite>rup_dim_model</cite> String to select the magnitude scaling relationship.</dt>
+<dd><p class="first last">Currently supported values are:</p>
+</dd>
+</dl>
+<ul class="simple">
+<li>WC94: Wells, D. L., &amp; Coppersmith, K. J. (1994). New empirical
+relationships among magnitude, rupture length, rupture width, rupture area,
+and surface displacement, <em>Bulletin of the Seismological Society of
+America</em>, 84(4), 974-1002.</li>
+<li>S14: Somerville, P. (2014). Scaling Relations between Seismic Moment and
+Rupture Area of Earthquakes in Stable Continental Regions, <em>PEER Report</em>
+2014/14.</li>
+<li>HB08: Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for
+recent large earthquakes, <em>Bulletin of the Seismological Society of
+America</em>, 98(1), 490-494.</li>
+<li>Sea10_interface: Interface coefficients of Strasser, F. O., Arango,
+M. C., &amp; Bommer, J. J. (2010). Scaling of the source dimensions of
+interface and intraslab subduction-zone earthquakes with moment magnitude,
+<em>Seismological Research Letters</em>, 81(6), 941-950.</li>
+<li>Sea10_slab: Slab coefficients from the paper in previous bullet.</li>
+</ul>
+</li>
+<li><p class="first"><cite>mech</cite> The rupture mechanism, only used by some scaling relationships:</p>
+<ul class="simple">
+<li>A: all/unknown mechanisms,</li>
+<li>SS: strike-slip,</li>
+<li>N: normal,</li>
+<li>R: reverse.</li>
+</ul>
+</li>
+<li><p class="first"><cite>LW</cite> Boolean for whether to separately select rupture length and width
+distributions, otherwise select the rupture area and compute length and
+width from it and an assumed aspect ratio.</p>
+</li>
+<li><p class="first"><cite>AR</cite> Aspect ratio (Length/Width) of the rupture. The aspect ratio is
+maintained until the rupture width spans the seismogenic zone, after
+which only the rupture length will increase.</p>
+</li>
+<li><p class="first"><cite>min_seis_depth</cite> The minimum seismogenic depth (km).</p>
+</li>
+<li><p class="first"><cite>max_seis_depth</cite> The maximum seismogenic depth (km).</p>
+</li>
+<li><p class="first"><cite>mindip_deg</cite> The minimum rupture dip in degrees (0 min, 90 max).</p>
+</li>
+<li><p class="first"><cite>maxdip_deg</cite> The maximum rupture dip in degrees (0 min 90 max).</p>
+</li>
+<li><p class="first"><cite>ndip</cite> The number of integration steps in dip.</p>
+</li>
+<li><p class="first"><cite>ntheta</cite> The number of integration steps in theta.</p>
+</li>
+<li><p class="first"><cite>nxny</cite> The number of integration steps in x and y (minimum is 2).</p>
+</li>
+<li><p class="first"><cite>trunc</cite> For the integration in area (or length and width), this is the
+truncation of the normal distribution (in standard deviation units).</p>
+</li>
+<li><p class="first"><cite>neps</cite> The number of integration steps for area (or length and width)
+from -trunc to +trunc. Larger numbers increase the accuracy of the result,
+but take longer to run.</p>
+</li>
+<li><p class="first"><cite>minmag</cite> The minimum magnitude for which to compute results.</p>
+</li>
+<li><p class="first"><cite>maxmag</cite> The maximum magnitude for which to compute results.</p>
+</li>
+<li><p class="first"><cite>dmag</cite> The size of the steps from minmag to maxmag.</p>
+</li>
+<li><p class="first"><cite>minepi</cite> The minimum epicentral distance for which to compute results.</p>
+</li>
+<li><p class="first"><cite>maxepi</cite> The maximum epicentral distance for which to compute results.</p>
+</li>
+<li><dl class="first docutils">
+<dt><cite>nepi</cite> The number of steps from minepi to max epi. The steps will be</dt>
+<dd><p class="first last">uniformly sized in log space.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><cite>nz</cite> The number of integration steps in depth for Ztor. For any given
+rupture width and dip in the integration, Ztor ranges from
+<cite>(max_seis_depth - width * sin(dip))</cite> to <cite>min_seis_depth</cite>. Only used for
+if <cite>what=’Rrup’</cite>.</p>
+</li>
+</ul>
+</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">run_ps2ff</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">config_file</span>
+</pre></div>
+</div>
+<div class="section" id="Positional Arguments">
+<h2>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h2>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>config_file</kbd></td>
+<td>The configuration file.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="Named Arguments">
+<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h2>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>-v, --verbose</kbd></td>
+<td>Print informational messages.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

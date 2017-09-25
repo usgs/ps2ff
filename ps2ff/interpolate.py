@@ -2,6 +2,7 @@
 PS2FF class for converting point distances (epicentral or hypocentral)
 to equivalent average finite rupture distances (Rjb or Rrup). Based
 upon:
+
    - Thomposn, E. M., C. B. Worden (2018). Estimating rupture distances
      without a rupture Bull. Seism. Soc. Am. (in press).
 
@@ -92,7 +93,7 @@ class PS2FF(object):
             (PS2FF): An object of the PS2FF class initialized with
             the tables corresponding to the rfile argument.
         """
-        this = cls()
+        self = cls()
         datadir = pkg_resources.resource_filename('ps2ff', 'tables')
         filepath = os.path.join(datadir, rfile)
         if not os.path.isfile(filepath):
@@ -115,7 +116,7 @@ class PS2FF(object):
 
         r2r_ratios_grid = r2r_ratios_tbl.values[:, 1:]
 
-        this.r2r_ratios_obj = spint.RectBivariateSpline(dist_list, mag_list,
+        self.r2r_ratios_obj = spint.RectBivariateSpline(dist_list, mag_list,
                                                         r2r_ratios_grid,
                                                         kx=1, ky=1)
 
@@ -123,14 +124,14 @@ class PS2FF(object):
         r2r_var_tbl = pd.read_csv(varfile, comment='#')
 
         r2r_var_grid = r2r_var_tbl.values[:, 1:]
-        this.r2r_var_obj = spint.RectBivariateSpline(dist_list, mag_list,
+        self.r2r_var_obj = spint.RectBivariateSpline(dist_list, mag_list,
                                                      r2r_var_grid,
                                                      kx=1, ky=1)
-        this.rfile = rfile
-        this.vfile = os.path.basename(varfile)
-        return this
+        self.rfile = rfile
+        self.vfile = os.path.basename(varfile)
+        return self
 
-    def r2r(this, r, M):
+    def r2r(self, r, M):
         """
         Convert point distances to the equivalent average finite rupture
         distances, based on the parameters specified when creating this
@@ -146,9 +147,9 @@ class PS2FF(object):
             (numpy.ndarray): An array the same shape as r, with
                 distances converted to average finite rupture distance.
         """
-        return r * this.r2r_ratios_obj.ev(np.log(r), M)
+        return r * self.r2r_ratios_obj.ev(np.log(r), M)
 
-    def rat(this, r, M):
+    def rat(self, r, M):
         """
         Return ratios needed to convert point distances to the equivalent
         average finite rupture distances, based on the parameters specified
@@ -165,9 +166,9 @@ class PS2FF(object):
                 the ratios (multipliers) needed to convert r to
                 average finite rupture distance.
         """
-        return this.r2r_ratios_obj.ev(np.log(r), M)
+        return self.r2r_ratios_obj.ev(np.log(r), M)
 
-    def var(this, r, M):
+    def var(self, r, M):
         """
         Return the additional variance from the uncertainty in
         point distances vis a vis finite rupture distance.
@@ -183,9 +184,9 @@ class PS2FF(object):
             the additional variance from the uncertainty in finite
             rupture distance for the distances in r.
         """
-        return this.r2r_var_obj.ev(np.log(r), M)
+        return self.r2r_var_obj.ev(np.log(r), M)
 
-    def files(this):
+    def files(self):
         """
         Returns the table files that were used to construct this
         object.
@@ -196,7 +197,7 @@ class PS2FF(object):
         Returns:
             (str, str): A tuple of the ratio file and variance file.
         """
-        return this.rfile, this.vfile
+        return self.rfile, self.vfile
 
     @classmethod
     def getValidFiles(cls):
