@@ -27,7 +27,6 @@ def get_custom_validator():
 
     """
     fdict = {
-        'distType': distType,
         'magScalingType': magScalingType,
         'mechType': mechType,
     }
