@@ -51,7 +51,7 @@ example:
 Rjb_S14_mechA_ar1p0_seis0_15_Ratios.csv
 ```
 where:
- - "Rjb" is the the `what` parameter in the configuration file.
+ - "Rjb" is the the `what` [command line argument](https://usgs.github.io/ps2ff/run_ps2ff.html#Named Arguments).
  - "S14" is the selected `rup_dim_model`.
  - "mechA" specifies the rupture mechanism parameter `mech`, where "A" can
    be one of "A", "SS", "N", or "R".

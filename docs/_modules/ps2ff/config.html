@@ -105,7 +105,6 @@
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;ps2ff&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">),</span>
                         <span class="s1">&#39;configspec.conf&#39;</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="get_custom_validator"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.get_custom_validator">[docs]</a><span class="k">def</span> <span class="nf">get_custom_validator</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a validator suitable for validating the ps2ff config file.</span>
@@ -115,13 +114,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fdict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;distType&#39;</span><span class="p">:</span> <span class="n">distType</span><span class="p">,</span>
         <span class="s1">&#39;magScalingType&#39;</span><span class="p">:</span> <span class="n">magScalingType</span><span class="p">,</span>
         <span class="s1">&#39;mechType&#39;</span><span class="p">:</span> <span class="n">mechType</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">validator</span> <span class="o">=</span> <span class="n">Validator</span><span class="p">(</span><span class="n">fdict</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">validator</span></div>
-
 
 <div class="viewcode-block" id="config_error"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.config_error">[docs]</a><span class="k">def</span> <span class="nf">config_error</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -154,7 +151,6 @@
                            <span class="p">(</span><span class="s1">&#39;was&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;were&#39;</span><span class="p">,</span> <span class="n">errs</span><span class="p">,</span>
                             <span class="s1">&#39;error&#39;</span> <span class="k">if</span> <span class="n">errs</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;errors&#39;</span><span class="p">))</span></div>
 
-
 <div class="viewcode-block" id="check_config"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.check_config">[docs]</a><span class="k">def</span> <span class="nf">check_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks the config for sanity.</span>
@@ -178,24 +174,6 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: minepi == maxepi, but nepi != 1&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="distType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.distType">[docs]</a><span class="k">def</span> <span class="nf">distType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks that the value is in the DistType enum and returns</span>
-<span class="sd">    the appropriate enum.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: Unknown value &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;what&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">thing</span> <span class="ow">in</span> <span class="n">DistType</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">thing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">thing</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: Invalid value &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;what&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;what&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-          <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">DistType</span><span class="p">)]))</span>
-    <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
-
-
 <div class="viewcode-block" id="magScalingType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.magScalingType">[docs]</a><span class="k">def</span> <span class="nf">magScalingType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks that the value is in the magScalingType enum and returns</span>
@@ -211,7 +189,6 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config error: &quot;rup_dim_model&quot; must be in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
           <span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">MagScaling</span><span class="p">)]))</span>
     <span class="k">raise</span> <span class="n">ValidateError</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="mechType"><a class="viewcode-back" href="../../ps2ff.config.html#ps2ff.config.mechType">[docs]</a><span class="k">def</span> <span class="nf">mechType</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

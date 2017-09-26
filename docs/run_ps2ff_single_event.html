@@ -96,99 +96,94 @@
             
   <div class="section" id="run-ps2ff-single-event">
 <h1>run_ps2ff_single_event<a class="headerlink" href="#run-ps2ff-single-event" title="Permalink to this headline">¶</a></h1>
-<p><p><cite>run_ps2ff_single_event</cite> produces tables of Rrup-to-Repi and Rjb-to-Repi
+<p><p>This program produces tables of Rrup-to-Repi and Rjb-to-Repi
 ratios and variances for a single event. This means that the magnitdue and
 hypocentral depth are available, simplifying the integration. It optionally
 tabulates the adjustment factors as a function of backazimuth. An example
 configuration file for this program is given in
-<cite>tests/config/test_single.ini</cite>.</p>
+<code class="docutils literal"><span class="pre">tests/config/test_single.ini</span></code> <a class="reference external" href="https://github.com/usgs/ps2ff/blob/master/tests/config/test_single.ini">here</a>.</p>
 <p>The configuration parameters are:</p>
 <ul>
-<li><p class="first"><cite>M</cite> The earthquake magnitude.</p>
+<li><p class="first"><strong>M</strong> – The earthquake magnitude.</p>
 </li>
-<li><p class="first"><cite>zhyp</cite> The hypocentral depth of the earthquake.</p>
+<li><p class="first"><strong>zhyp</strong> – The hypocentral depth of the earthquake.</p>
 </li>
-<li><p class="first"><cite>bytheta</cite> Tabulate factors for bins of theta (bool; default=False).</p>
+<li><p class="first"><strong>bytheta</strong> – Tabulate factors for bins of theta (bool; default=False).</p>
 </li>
-<li><p class="first"><cite>NP</cite> The number of processors (cores) to use. Minimum 1.</p>
+<li><p class="first"><strong>NP</strong> – The number of processors (cores) to use. Minimum 1.</p>
 </li>
-<li><p class="first"><cite>datadir</cite> The directory into which the output files are written. If
-unspecified, it uses <cite>./data</cite>.</p>
+<li><p class="first"><strong>datadir</strong> — The directory into which the output files are written. If
+unspecified, it uses <code class="docutils literal"><span class="pre">./data</span></code>.</p>
 </li>
 <li><dl class="first docutils">
-<dt><cite>rup_dim_model</cite> String to select the magnitude scaling relationship.</dt>
+<dt><strong>rup_dim_model</strong> – String to select the magnitude scaling relationship.</dt>
 <dd><p class="first last">Currently supported values are:</p>
 </dd>
 </dl>
 <ul class="simple">
-<li>WC94: Wells, D. L., &amp; Coppersmith, K. J. (1994). New empirical
+<li>WC94 – Wells, D. L., &amp; Coppersmith, K. J. (1994). New empirical
 relationships among magnitude, rupture length, rupture width, rupture area,
 and surface displacement, <em>Bulletin of the Seismological Society of
-America</em>, 84(4), 974-1002.</li>
-<li>S14: Somerville, P. (2014). Scaling Relations between Seismic Moment and
+America</em>, 84(4), 974–1002.</li>
+<li>S14 – Somerville, P. (2014). Scaling Relations between Seismic Moment and
 Rupture Area of Earthquakes in Stable Continental Regions, <em>PEER Report</em>
 2014/14.</li>
-<li>HB08: Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for
+<li>HB08 – Hanks, T. C. and Bakun, W. H. (2008). M-logA observations for
 recent large earthquakes, <em>Bulletin of the Seismological Society of
-America</em>, 98(1), 490-494.</li>
-<li>Sea10_interface: Interface coefficients of Strasser, F. O., Arango,
+America</em>, 98(1), 490–494.</li>
+<li>Sea10_interface – Interface coefficients of Strasser, F. O., Arango,
 M. C., &amp; Bommer, J. J. (2010). Scaling of the source dimensions of
 interface and intraslab subduction-zone earthquakes with moment magnitude,
-<em>Seismological Research Letters</em>, 81(6), 941-950.</li>
+<em>Seismological Research Letters</em>, 81(6), 941–950.</li>
 <li>Sea10_slab: Slab coefficients from the paper in previous bullet.</li>
 </ul>
 </li>
-<li><p class="first"><cite>mech</cite> The rupture mechanism, only used by some scaling relationships:</p>
+<li><p class="first"><em>mech</em> – The rupture mechanism, only used by some scaling relationships:</p>
 <ul class="simple">
-<li>A: all/unknown mechanisms,</li>
-<li>SS: strike-slip,</li>
-<li>N: normal,</li>
-<li>R: reverse.</li>
+<li>A – all/unknown mechanisms,</li>
+<li>SS – strike-slip,</li>
+<li>N – normal,</li>
+<li>R – reverse.</li>
 </ul>
 </li>
-<li><p class="first"><cite>LW</cite> Boolean for whether to separately select rupture length and width
+<li><p class="first"><strong>LW</strong> – Boolean for whether to separately select rupture length and width
 distributions, otherwise select the rupture area and compute length and
 width from it and an assumed aspect ratio.</p>
 </li>
-<li><p class="first"><cite>AR</cite> Aspect ratio (Length/Width) of the rupture. The aspect ratio is
+<li><p class="first"><strong>AR</strong> – Aspect ratio (Length/Width) of the rupture. The aspect ratio is
 maintained until the rupture width spans the seismogenic zone, after
 which only the rupture length will increase.</p>
 </li>
-<li><p class="first"><cite>min_seis_depth</cite> The minimum seismogenic depth (km).</p>
+<li><p class="first"><strong>min_seis_depth</strong> - The minimum seismogenic depth (km).</p>
 </li>
-<li><p class="first"><cite>max_seis_depth</cite> The maximum seismogenic depth (km).</p>
+<li><p class="first"><strong>max_seis_depth</strong> - The maximum seismogenic depth (km).</p>
 </li>
-<li><p class="first"><cite>mindip_deg</cite> The minimum rupture dip in degrees (0 min, 90 max).</p>
+<li><p class="first"><strong>mindip_deg</strong> - The minimum rupture dip in degrees (0 min, 90 max).</p>
 </li>
-<li><p class="first"><cite>maxdip_deg</cite> The maximum rupture dip in degrees (0 min 90 max).</p>
+<li><p class="first"><strong>maxdip_deg</strong> - The maximum rupture dip in degrees (0 min 90 max).</p>
 </li>
-<li><p class="first"><cite>ndip</cite> The number of integration steps in dip.</p>
+<li><p class="first"><strong>ndip</strong> - The number of integration steps in dip.</p>
 </li>
-<li><p class="first"><cite>ntheta</cite> The number of integration steps in theta.</p>
+<li><p class="first"><strong>ntheta</strong> - The number of integration steps in theta.</p>
 </li>
-<li><p class="first"><cite>nxny</cite> The number of integration steps in x and y (minimum is 2).</p>
+<li><p class="first"><strong>nxny</strong> - The number of integration steps in x and y (minimum is 2).</p>
 </li>
-<li><p class="first"><cite>trunc</cite> For the integration in area (or length and width), this is the
+<li><p class="first"><strong>trunc</strong> - For the integration in area (or length and width), this is the
 truncation of the normal distribution (in standard deviation units).</p>
 </li>
-<li><p class="first"><cite>neps</cite> The number of integration steps for area (or length and width)
-from -trunc to +trunc. Larger numbers increase the accuracy of the result,
+<li><p class="first"><strong>neps</strong> - The number of integration steps for area (or length and width)
+from –trunc to +trunc. Larger numbers increase the accuracy of the result,
 but take longer to run.</p>
 </li>
-<li><p class="first"><cite>minepi</cite> The minimum epicentral distance for which to compute results.</p>
+<li><p class="first"><strong>minepi</strong> - The minimum epicentral distance for which to compute results.</p>
 </li>
-<li><p class="first"><cite>maxepi</cite> The maximum epicentral distance for which to compute results.</p>
+<li><p class="first"><strong>maxepi</strong> - The maximum epicentral distance for which to compute results.</p>
 </li>
 <li><dl class="first docutils">
-<dt><cite>nepi</cite> The number of steps from minepi to max epi. The steps will be</dt>
+<dt><strong>nepi</strong> - The number of steps from minepi to max epi. The steps will be</dt>
 <dd><p class="first last">uniformly sized in log space.</p>
 </dd>
 </dl>
-</li>
-<li><p class="first"><cite>nz</cite> The number of integration steps in depth for Ztor. For any given
-rupture width and dip in the integration, Ztor ranges from
-<cite>(max_seis_depth - width * sin(dip))</cite> to <cite>min_seis_depth</cite>. Only used for
-if <cite>what=’Rrup’</cite>.</p>
 </li>
 </ul>
 </p>
