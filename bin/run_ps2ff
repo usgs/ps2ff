@@ -101,6 +101,7 @@ from ps2ff.config import (get_configspec,
                           get_custom_validator,
                           check_config,
                           config_error)
+from ps2ff.constants import DistType
 
 
 def get_parser():
@@ -112,11 +113,15 @@ def get_parser():
     else:
         description = docustring
 
-    parser = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(description=description, add_help=True)
+    parser._optionals.title = 'named arguments'
     parser.add_argument('config_file',
                         help='The configuration file.')
+    parser.add_argument('-w', '--what', choices=['rjb', 'rrup'],
+                        required=True,
+                        help='(required) select the distance measure to calculate')
     parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Print informational messages.')
+                        help='print informational messages')
     return parser
 
 def main(args):
@@ -135,6 +140,14 @@ def main(args):
         config_error(config, results)
 
     check_config(config)
+
+    if args.what == 'rjb':
+        config['what'] = DistType.Rjb
+    elif args.what == 'rrup':
+        config['what'] = DistType.Rrup
+    else:
+        print('Unknown parameter to -w: This can\'t happen!')
+        sys.exit(1)
 
     filebase = copy.copy(config['what'].value)
     if 'datadir' in config:
