@@ -85,5 +85,5 @@ configuration file for this program is given in
 `tests/config/test_single.ini`.
 
 See this package's documentation on the 
-[command line interface](<https://usgs.github.io/ps2ff/)
+[command line interface](https://usgs.github.io/ps2ff/)
 for more on usage and configuration options.

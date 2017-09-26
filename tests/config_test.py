@@ -61,16 +61,6 @@ def test_config():
     config.check_config(ctest)
 
     #
-    # distType()
-    #
-    with pytest.raises(ValidateError):
-        res = config.distType(['1', '2'])
-    with pytest.raises(ValidateError):
-        res = config.distType('NotAThing')
-    res = config.distType('Rjb')
-    assert res is DistType.Rjb
-
-    #
     # magScalingType()
     #
     with pytest.raises(ValidateError):

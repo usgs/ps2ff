@@ -18,7 +18,6 @@ def get_configspec():
     return os.path.join(pkg_resources.resource_filename('ps2ff', 'data'),
                         'configspec.conf')
 
-
 def get_custom_validator():
     """
     Returns a validator suitable for validating the ps2ff config file.
@@ -28,13 +27,11 @@ def get_custom_validator():
 
     """
     fdict = {
-        'distType': distType,
         'magScalingType': magScalingType,
         'mechType': mechType,
     }
     validator = Validator(fdict)
     return validator
-
 
 def config_error(config, results):
     """
@@ -67,7 +64,6 @@ def config_error(config, results):
                            ('was' if errs == 1 else 'were', errs,
                             'error' if errs == 1 else 'errors'))
 
-
 def check_config(config):
     """
     Checks the config for sanity.
@@ -91,24 +87,6 @@ def check_config(config):
         print('Config error: minepi == maxepi, but nepi != 1')
         raise ValidateError()
 
-
-def distType(value):
-    """
-    Checks that the value is in the DistType enum and returns
-    the appropriate enum.
-    """
-    if not isinstance(value, str):
-        print('Config error: Unknown value "%s" for "what"' % (value))
-        raise ValidateError()
-    for thing in DistType:
-        if value == thing.value:
-            return thing
-    print('Config error: Invalid value "%s" for "what"' % (value))
-    print('Config error: "what" must be in %s' %
-          ([x.value for x in list(DistType)]))
-    raise ValidateError()
-
-
 def magScalingType(value):
     """
     Checks that the value is in the magScalingType enum and returns
@@ -124,7 +102,6 @@ def magScalingType(value):
     print('Config error: "rup_dim_model" must be in %s' %
           ([x.value for x in list(MagScaling)]))
     raise ValidateError()
-
 
 def mechType(value):
     """

@@ -5,8 +5,8 @@ from impactutils.io.cmd import get_command_output
 
 
 def test_rrup_Sea10_slab():
-    conf = 'fast_rrup_Sea10_slab.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_Sea10_slab.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/Rrup_Sea10_slab_mechA_ar1p0_seis0_15_Ratios.csv",
@@ -29,8 +29,8 @@ def test_rrup_Sea10_slab():
 
 
 def test_rrup_Sea10_interface():
-    conf = 'fast_rrup_Sea10_interface.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_Sea10_interface.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/Rrup_Sea10_interface_mechA_ar1p0_seis0_15_Ratios.csv",
@@ -53,8 +53,8 @@ def test_rrup_Sea10_interface():
 
 
 def test_rrup_HB08():
-    conf = 'fast_rrup_HB08.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_HB08.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/Rrup_HB08_mechA_ar1p0_seis0_15_Ratios.csv",
@@ -77,8 +77,8 @@ def test_rrup_HB08():
 
 
 def test_rrup_WC94_SS_F():
-    conf = 'fast_rrup_WC94_SS_F.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_SS_F.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rrup_WC94_mechSS_ar1p0_seis0_15_Ratios.csv",
@@ -101,8 +101,8 @@ def test_rrup_WC94_SS_F():
 
 
 def test_rjb_WC94_SS_F():
-    conf = 'fast_rjb_WC94_SS_F.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_SS_F.ini'
+    cmd = "bin/run_ps2ff -w rjb tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rjb_WC94_mechSS_ar1p0_seis0_15_Ratios.csv",
@@ -125,8 +125,8 @@ def test_rjb_WC94_SS_F():
 
 
 def test_rrup_WC94_SS_T():
-    conf = 'fast_rrup_WC94_SS_T.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_SS_T.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rrup_WC94_mechSS_LW_seis0_15_Ratios.csv",
@@ -149,8 +149,8 @@ def test_rrup_WC94_SS_T():
 
 
 def test_rjb_WC94_SS_T():
-    conf = 'fast_rjb_WC94_SS_T.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_SS_T.ini'
+    cmd = "bin/run_ps2ff -w rjb tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rjb_WC94_mechSS_LW_seis0_15_Ratios.csv",
@@ -173,8 +173,8 @@ def test_rjb_WC94_SS_T():
 
 
 def test_rrup_WC94_R_T():
-    conf = 'fast_rrup_WC94_R_T.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_R_T.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rrup_WC94_mechR_LW_seis0_15_Ratios.csv",
@@ -197,8 +197,8 @@ def test_rrup_WC94_R_T():
 
 
 def test_rjb_WC94_R_T():
-    conf = 'fast_rjb_WC94_R_T.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_R_T.ini'
+    cmd = "bin/run_ps2ff -w rjb tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rjb_WC94_mechR_LW_seis0_15_Ratios.csv",
@@ -221,8 +221,8 @@ def test_rjb_WC94_R_T():
 
 
 def test_rrup_WC94_R_F():
-    conf = 'fast_rrup_WC94_R_F.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_R_F.ini'
+    cmd = "bin/run_ps2ff -w rrup tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rrup_WC94_mechR_ar1p0_seis0_15_Ratios.csv",
@@ -245,8 +245,8 @@ def test_rrup_WC94_R_F():
 
 
 def test_rjb_WC94_R_F():
-    conf = 'fast_rjb_WC94_R_F.ini'
-    cmd = "bin/run_ps2ff tests/config/%s" % conf
+    conf = 'fast_WC94_R_F.ini'
+    cmd = "bin/run_ps2ff -w rjb tests/config/%s" % conf
     rc, so, se = get_command_output(cmd)
     r1 = pd.DataFrame.from_csv(
         "tests/data/test_Rjb_WC94_mechR_ar1p0_seis0_15_Ratios.csv",
