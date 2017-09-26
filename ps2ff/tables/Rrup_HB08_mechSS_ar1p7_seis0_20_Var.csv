@@ -1,7 +1,7 @@
 # Program: /home/emthompson/anaconda3/envs/ps2ff/bin/run_ps2ff
-# Config file: figure4_mid.ini
-# Process start: 2017-09-12T06:41:33.134272
-# Process finish: 2017-09-12T08:33:05.431609
+# Config file: acr_ss_rrup.ini
+# Process start: 2017-09-25T15:40:42.407164
+# Process finish: 2017-09-25T17:12:05.607618
 # rup_dim_model = HB08, mech = SS, LW = False, AR = 1.7, ndip = 4, mindip = 1.308997, maxdip = 1.570796, ntheta = 73, nxny = 50
 # neps = 7, trunc = 3.000000, min_seis_depth = 0.000000, max_seis_depth = 20.000000
 "Repi_km","V4","V4.25","V4.5","V4.75","V5","V5.25","V5.5","V5.75","V6","V6.25","V6.5","V6.75","V7","V7.25","V7.5","V7.75","V8","V8.25","V8.5","V8.75","V9"

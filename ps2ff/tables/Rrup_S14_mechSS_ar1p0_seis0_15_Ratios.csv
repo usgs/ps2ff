@@ -1,7 +1,7 @@
 # Program: /home/emthompson/anaconda3/envs/ps2ff/bin/run_ps2ff
 # Config file: scr_ss_rrup.ini
-# Process start: 2017-09-15T06:34:23.195982
-# Process finish: 2017-09-15T08:56:55.250598
+# Process start: 2017-09-26T07:39:21.204752
+# Process finish: 2017-09-26T10:19:15.470935
 # rup_dim_model = S14, mech = SS, LW = False, AR = 1.0, ndip = 7, mindip = 1.047198, maxdip = 1.570796, ntheta = 73, nxny = 50
 # neps = 7, trunc = 3.000000, min_seis_depth = 0.000000, max_seis_depth = 15.000000
 "Repi_km","R4","R4.25","R4.5","R4.75","R5","R5.25","R5.5","R5.75","R6","R6.25","R6.5","R6.75","R7","R7.25","R7.5","R7.75","R8","R8.25","R8.5","R8.75","R9"
