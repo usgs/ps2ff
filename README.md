@@ -5,8 +5,8 @@ ps2ff
 
 <img align="left" height="70" src="doc_source/_static/ps2ff_wide.png">
 Produce approximated finite fault distances and variance corrections given
-point source information (e.g., Repi (epcentral distance) to Rjb (Joyner-Boore
-distance) or Rrup (closest distance to rupture).
+point source information, for example Repi (epcentral distance) to Rjb
+(Joyner-Boore distance) or Rrup (closest distance to rupture).
 
 <br><br>
 
