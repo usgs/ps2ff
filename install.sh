@@ -53,7 +53,7 @@ source activate $VENV
 pip install https://github.com/usgs/earthquake-impact-utils/archive/master.zip
 
 # This package
-echo "Installing shakelib..."
+echo "Installing ps2ff..."
 pip install -e .
 
 # Tell the user they have to activate this environment
