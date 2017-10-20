@@ -34,6 +34,13 @@ environment after installation, type
 source activate ps2ff
 ```
 
+Background
+----------
+This code implements the methods descibed by:
+- Thompson, E. M., and D. B. Worden (2017). Estimating rupture distances without
+  a rupture, Bulletin of the Seismological Society of America, in press.
+
+
 Running the Programs
 --------------------
 The primary program is `run_ps2ff`, which must be handed a configuraiton file
