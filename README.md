@@ -37,7 +37,7 @@ source activate ps2ff
 Background
 ----------
 This code implements the methods descibed by:
-- Thompson, E. M., and D. B. Worden (2017). Estimating rupture distances without
+- Thompson, E. M., and C. B. Worden (2017). Estimating rupture distances without
   a rupture, Bulletin of the Seismological Society of America, in press.
 
 
