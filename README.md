@@ -38,15 +38,18 @@ Background
 ----------
 This code implements the methods descibed by:
 - Thompson, E. M., and C. B. Worden (2017). Estimating rupture distances without
-  a rupture, *Bulletin of the Seismological Society of America*, in press.
+  a rupture, *Bulletin of the Seismological Society of America*. 
+DOI: https://doi.org/10.1785/0120170174.
 
 
 Running the Programs
 --------------------
-The primary program is `run_ps2ff`, which must be handed a configuraiton file
+The primary program is `run_ps2ff`, which must be given a configuraiton file
 ```
-ps2ff config_file.ini
+ps2ff -w Rjb config_file.ini
 ```
+where '-w Rjb' is the 'what' 
+[command line argument](https://usgs.github.io/ps2ff/run_ps2ff.html).
 There are example configuration files in the `ps2ff/config` directory.
 
 Output Tables
