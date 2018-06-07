@@ -4,9 +4,9 @@ python:
 
 install:
     # Install requirements and this package
-    - bash install.sh -t
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - source activate ps2ff
+    - bash install.sh
+    - . $HOME/miniconda/etc/profile.d/conda.sh
+    - conda activate ps2ff
 script:
     - export PYTHONPATH="."
     - py.test --cov=.
