@@ -1,0 +1,14 @@
+name: ps2ff
+channels:
+- conda-forge
+- defaults
+dependencies:
+- impactutils
+- numpy
+- pandas
+- scipy
+- pytest
+- pytest-cov
+- pytest-mpl
+- python=3.5
+- configobj
