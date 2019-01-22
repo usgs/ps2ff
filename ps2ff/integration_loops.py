@@ -49,9 +49,9 @@ def mag_dist_loop(conf, iP=None, filename=None, M=None, Repi=None):
             ratio[i, j] = dist_avg / Repi[i]
             variance[i, j] = dist_var
             print("        Proc %d j=%d of %d %s" % (iP, j+1, nmag,
-                  datetime.datetime.now().isoformat()))
+                                                     datetime.datetime.now().isoformat()))
         print("Proc %d done with %d of %d distances %s" % (iP, i+1, nepi,
-              datetime.datetime.now().isoformat()))
+                                                           datetime.datetime.now().isoformat()))
 
     for fname, farr in (('Ratios', ratio), ('Var', variance)):
         f = open('%s%s_%02d.csv' % (filename, fname, iP), 'w')
@@ -110,7 +110,7 @@ def single_event_loop(conf, iP=0, rjb_filename='junk',
                 Rjb_ratio[i, j] = rjb_avg / Repi[i]
                 Rjb_variance[i, j] = rjb_var
                 print("        Proc %d j=%d of %d %s" % (iP, j+1,
-                      conf['ntheta'], datetime.datetime.now().isoformat()))
+                                                         conf['ntheta'], datetime.datetime.now().isoformat()))
                 print("Proc %d done with %d of %d distances %s" %
                       (iP, i+1, nepi, datetime.datetime.now().isoformat()))
         else:
@@ -122,9 +122,9 @@ def single_event_loop(conf, iP=0, rjb_filename='junk',
             Rjb_ratio[i, 0] = rjb_avg / Repi[i]
             Rjb_variance[i, 0] = rjb_var
             print("        Proc %d j=%d of %d %s" % (iP, 1, 1,
-                  datetime.datetime.now().isoformat()))
+                                                     datetime.datetime.now().isoformat()))
             print("Proc %d done with %d of %d distances %s" % (iP, i+1, nepi,
-                  datetime.datetime.now().isoformat()))
+                                                               datetime.datetime.now().isoformat()))
     fr_rrup = open('%sRatios_%02d.csv' % (rrup_filename, iP), 'w')
     fv_rrup = open('%sVar_%02d.csv' % (rrup_filename, iP), 'w')
     fr_rjb = open('%sRatios_%02d.csv' % (rjb_filename, iP), 'w')
@@ -167,7 +167,7 @@ def rjb_inner_loop(M, Repi, conf):
     """
     This function evaluates the Rjb mean and var integral
     for a single M/R pair, looping over:
-    
+
        - dip
        - dx, dy (location of hypocenter on fault)
        - theta (angle to fault)
@@ -504,7 +504,8 @@ def rrup_inner_loop(M, Repi, conf):
                     dx = x[1] - x[0]
                 # Calclate range of Ztor
                 ZtorMax = conf['max_seis_depth'] - width[w]*np.sin(dip[k])
-                if np.allclose(ZtorMax, 0) or conf['nz'] == 1: # Should 0 be min_seis_depth
+                # Should 0 be min_seis_depth
+                if np.allclose(ZtorMax, 0) or conf['nz'] == 1:
                     nz = 1
                     dz = 0
                     Ztor = np.array([0])        # should be min_seis_depth ???
@@ -597,8 +598,8 @@ def rrup_inner_loop(M, Repi, conf):
                                     Ztor[z]*np.cos(dip[k])
                                 r3 = Rx > (tmp + width[w]/np.cos(dip[k]))
                                 Rrupp[r3] = np.sqrt((Rx[r3] -
-                                    width[w]*np.cos(dip[k]))**2 + (Ztor[z] +
-                                    width[w]*np.sin(dip[k]))**2)
+                                                     width[w]*np.cos(dip[k]))**2 + (Ztor[z] +
+                                                                                    width[w]*np.sin(dip[k]))**2)
 
                             Rrup = np.sqrt(Rrupp**2 + Ry**2)
                             Rrup2 = Rrup * Rrup
@@ -662,7 +663,7 @@ def single_event_inner_loop(conf, Repi, theta=0, ntheta=73):
         Repi (float): Epicentral distance (km).
         theta (float): Source-to-site angle (radians).
         ntheta (int): Number of integration steps for theta; used if `bytheta`
-            is True.
+            is False.
 
     Returns:
         tuple: Rrup variance, Rrup mean, Rjb variance, Rjb mean
