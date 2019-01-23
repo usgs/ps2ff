@@ -41,7 +41,7 @@ The configuration parameters are:
     *Seismological Research Letters*, 81(6), 941--950.
   - Sea10_slab: Slab coefficients from the paper in previous bullet.
 
-- *mech* -- The rupture mechanism, only used by some scaling relationships:
+- **mech** -- The rupture mechanism, only used by some scaling relationships:
 
   - A -- all/unknown mechanisms,
   - SS -- strike-slip,
@@ -120,6 +120,7 @@ configuration file for this program is given in
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Print informational messages.')
     return parser
+
 
 def main(args):
 
