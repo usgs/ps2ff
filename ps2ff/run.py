@@ -75,8 +75,6 @@ def single_event_adjustment(
             - Variance of Rrup conditioned on Repi, M, and Zhyp.
 
     """
-    start_time = time.time()
-
     # Check that mag_scaling and mechanism are the
     # correct type
     if not isinstance(mag_scaling, MagScaling):
@@ -107,10 +105,8 @@ def single_event_adjustment(
     conf['max_seis_depth'] = 35.0  # not used?
     conf['bytheta'] = False
 
-    repi_min = 0.1
-    repi_max = 1000
     repi = np.logspace(
-        np.log10(repi_min), np.log10(repi_max), n_repi)
+        np.log10(min_repi), np.log10(max_repi), n_repi)
 
     Rrup_var = np.zeros_like(repi)
     Rrup_avg = np.zeros_like(repi)
@@ -120,7 +116,5 @@ def single_event_adjustment(
     for i in range(n_repi):
         Rrup_var[i], Rrup_avg[i], Rjb_var[i], Rjb_avg[i] = \
             single_event_inner_loop(conf, repi[i], ntheta=n_theta)
-
-    print("Total execution time %f seconds." % (time.time() - start_time))
 
     return repi, Rjb_avg, Rrup_avg, Rjb_var, Rrup_var
