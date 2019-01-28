@@ -1,0 +1,229 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ps2ff.run &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/ps2ff_wide.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">ps2ff</h1>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ps2ff.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../programs.html">Command Line Interface</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ps2ff.run</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span> <span class="k">as</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">ps2ff.integration_loops</span> <span class="k">import</span> <span class="n">single_event_inner_loop</span>
+<span class="kn">from</span> <span class="nn">ps2ff.constants</span> <span class="k">import</span> <span class="n">MagScaling</span><span class="p">,</span> <span class="n">Mechanism</span>
+
+
+<span class="c1"># Use max_workers threading in model?</span>
+
+<div class="viewcode-block" id="single_event_adjustment"><a class="viewcode-back" href="../../ps2ff.run.html#ps2ff.run.single_event_adjustment">[docs]</a><span class="k">def</span> <span class="nf">single_event_adjustment</span><span class="p">(</span>
+        <span class="n">magnitude</span><span class="p">,</span>
+        <span class="n">hyp_depth</span><span class="p">,</span>
+        <span class="n">ar</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span>
+        <span class="n">mechanism</span><span class="o">=</span><span class="n">Mechanism</span><span class="o">.</span><span class="n">A</span><span class="p">,</span>
+        <span class="n">mag_scaling</span><span class="o">=</span><span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">,</span>
+        <span class="n">n_repi</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+        <span class="n">min_repi</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">max_repi</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">nxny</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">n_theta</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+        <span class="n">n_dip</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">min_dip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">max_dip</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">n_eps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">trunc</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method for getting event-specific point source distance</span>
+<span class="sd">    adjustment factors. This does not integrate across magnitude</span>
+<span class="sd">    or depth and so those values must be provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        magnitude (float):</span>
+<span class="sd">            Earthquake magnitude.</span>
+<span class="sd">        hyp_depth (float):</span>
+<span class="sd">            Hypocentral depth (km).</span>
+<span class="sd">        ar (float):</span>
+<span class="sd">            Aspect ratio (L/W).</span>
+<span class="sd">        mechanism (Mechanism):</span>
+<span class="sd">            A ps2ff.constants Mechanism instance.</span>
+<span class="sd">        mag_scaling (MagScaling):</span>
+<span class="sd">            A ps2ff.constants MagScaling instance.</span>
+<span class="sd">        n_repi (int):</span>
+<span class="sd">            Number of log-spaced Repi points to compute conversions.</span>
+<span class="sd">        min_repi (float):</span>
+<span class="sd">            Minimum Repi to compute conversions (km).</span>
+<span class="sd">        max_repi (float):</span>
+<span class="sd">            Maximum Repi to compute conversions (km).</span>
+<span class="sd">        nxny (int):</span>
+<span class="sd">            Number of integration steps in the x/y direction for floating,</span>
+<span class="sd">            the rupture plane around the hypocenter.</span>
+<span class="sd">        n_theta (int):</span>
+<span class="sd">            Number of integration steps for theta. Default value of 9 is</span>
+<span class="sd">            an angular step size of 45 deg since it goes from 0 to 360 deg.</span>
+<span class="sd">        n_dip (int)</span>
+<span class="sd">            Number of integration steps for dip. Default value of 3 gives</span>
+<span class="sd">            a step size of 45 deg for the default range of 0 to 90 deg.</span>
+<span class="sd">        min_dip (float):</span>
+<span class="sd">            Minimum dip for integration (rad).</span>
+<span class="sd">        max_dip (float):</span>
+<span class="sd">            Maximum dip for integration (rad).</span>
+<span class="sd">        n_eps (int):</span>
+<span class="sd">            Number of integration steps for mag-area relationship.</span>
+<span class="sd">        trunc (float):</span>
+<span class="sd">            Truncation level for normal distribution of log area conditioned</span>
+<span class="sd">            on magnitude.</span>
+
+<span class="sd">    Retunrs:</span>
+<span class="sd">        tuple: All arrays of length n_repi:</span>
+
+<span class="sd">            - Repi (km).</span>
+<span class="sd">            - Average Rjb conditioned on Repi, M, and Zhyp.</span>
+<span class="sd">            - Average Rrup conditioned on Repi, M, and Zhyp.</span>
+<span class="sd">            - Variance of Rjb conditioned on Repi, M, and Zhyp.</span>
+<span class="sd">            - Variance of Rrup conditioned on Repi, M, and Zhyp.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check that mag_scaling and mechanism are the</span>
+    <span class="c1"># correct type</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mag_scaling</span><span class="p">,</span> <span class="n">MagScaling</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">&#39;mag_scaling must bee a MagScaling instance&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mechanism</span><span class="p">,</span> <span class="n">Mechanism</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">&#39;mechanism must bee a Mechanism instance&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create conf dictionary.</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">magnitude</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;zhyp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hyp_depth</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;AR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ar</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mech&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mechanism</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;rup_dim_model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mag_scaling</span>
+
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nxny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nxny</span>
+
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ndip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_dip</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;mindip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_dip</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;maxdip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_dip</span>
+
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;neps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_eps</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;trunc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trunc</span>
+
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;min_seis_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">35.0</span>  <span class="c1"># not used?</span>
+    <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;bytheta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">repi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">min_repi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">max_repi</span><span class="p">),</span> <span class="n">n_repi</span><span class="p">)</span>
+
+    <span class="n">Rrup_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">repi</span><span class="p">)</span>
+    <span class="n">Rrup_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">repi</span><span class="p">)</span>
+    <span class="n">Rjb_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">repi</span><span class="p">)</span>
+    <span class="n">Rjb_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">repi</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_repi</span><span class="p">):</span>
+        <span class="n">Rrup_var</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Rrup_avg</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Rjb_var</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Rjb_avg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">single_event_inner_loop</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">repi</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ntheta</span><span class="o">=</span><span class="n">n_theta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">repi</span><span class="p">,</span> <span class="n">Rjb_avg</span><span class="p">,</span> <span class="n">Rrup_avg</span><span class="p">,</span> <span class="n">Rjb_var</span><span class="p">,</span> <span class="n">Rrup_var</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

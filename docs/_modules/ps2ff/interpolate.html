@@ -4,23 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ps2ff.interpolate &#8212; ps2ff 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -30,8 +23,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -70,18 +62,30 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for ps2ff.interpolate</h1><div class="highlight"><pre>
@@ -109,7 +113,7 @@
 
 <div class="viewcode-block" id="PS2FF"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF">[docs]</a><span class="k">class</span> <span class="nc">PS2FF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="PS2FF.fromParams"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.fromParams">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromParams</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="n">DistType</span><span class="o">.</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">mag_scaling</span><span class="o">=</span><span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">fromParams</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="n">DistType</span><span class="o">.</span><span class="n">Rjb</span><span class="p">,</span> <span class="n">mag_scaling</span><span class="o">=</span><span class="n">MagScaling</span><span class="o">.</span><span class="n">WC94</span><span class="p">,</span>
                    <span class="n">mechanism</span><span class="o">=</span><span class="n">Mechanism</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">AR</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">min_seis_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                    <span class="n">max_seis_depth</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -160,12 +164,12 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: could not find file with the supplied parameters&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File not found: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The available files are:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
+                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PS2FF.fromFile"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.fromFile">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a PS2FF object from a file specification. The file must</span>
 <span class="sd">        exist in the ps2ff tables.</span>
@@ -181,13 +185,13 @@
 <span class="sd">            (PS2FF): An object of the PS2FF class initialized with</span>
 <span class="sd">            the tables corresponding to the rfile argument.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
         <span class="n">datadir</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s1">&#39;ps2ff&#39;</span><span class="p">,</span> <span class="s1">&#39;tables&#39;</span><span class="p">)</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="n">rfile</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File not found: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The available files are:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
+                  <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">getValidFiles</span><span class="p">()))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rfile</span><span class="p">))</span>
 
         <span class="n">r2r_ratios_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
@@ -288,7 +292,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vfile</span></div>
 
 <div class="viewcode-block" id="PS2FF.getValidFiles"><a class="viewcode-back" href="../../ps2ff.interpolate.html#ps2ff.interpolate.PS2FF.getValidFiles">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getValidFiles</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getValidFiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a list of the valid conversion tables in the ps2ff</span>
 <span class="sd">        package.</span>
@@ -306,6 +310,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>

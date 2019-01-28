@@ -4,23 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ps2ff.integration_loops &#8212; ps2ff 1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -30,8 +23,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -70,18 +62,30 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for ps2ff.integration_loops</h1><div class="highlight"><pre>
@@ -136,9 +140,9 @@
             <span class="n">ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_var</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmag</span><span class="p">,</span>
-                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                                                     <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span>
-              <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                                                           <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
 
     <span class="k">for</span> <span class="n">fname</span><span class="p">,</span> <span class="n">farr</span> <span class="ow">in</span> <span class="p">((</span><span class="s1">&#39;Ratios&#39;</span><span class="p">,</span> <span class="n">ratio</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Var&#39;</span><span class="p">,</span> <span class="n">variance</span><span class="p">)):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
@@ -197,7 +201,7 @@
                 <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_var</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
-                      <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">],</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                                                         <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;ntheta&#39;</span><span class="p">],</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
                       <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -209,9 +213,9 @@
             <span class="n">Rjb_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_avg</span> <span class="o">/</span> <span class="n">Repi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">Rjb_variance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rjb_var</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;        Proc </span><span class="si">%d</span><span class="s2"> j=</span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                                                     <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Proc </span><span class="si">%d</span><span class="s2"> done with </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> distances </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">iP</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nepi</span><span class="p">,</span>
-                  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
+                                                               <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
     <span class="n">fr_rrup</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Ratios_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rrup_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="n">fv_rrup</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Var_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rrup_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="n">fr_rjb</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Ratios_</span><span class="si">%02d</span><span class="s1">.csv&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">rjb_filename</span><span class="p">,</span> <span class="n">iP</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
@@ -254,7 +258,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function evaluates the Rjb mean and var integral</span>
 <span class="sd">    for a single M/R pair, looping over:</span>
-<span class="sd">    </span>
+
 <span class="sd">       - dip</span>
 <span class="sd">       - dx, dy (location of hypocenter on fault)</span>
 <span class="sd">       - theta (angle to fault)</span>
@@ -591,7 +595,8 @@
                     <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="c1"># Calclate range of Ztor</span>
                 <span class="n">ZtorMax</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;max_seis_depth&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ZtorMax</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># Should 0 be min_seis_depth</span>
+                <span class="c1"># Should 0 be min_seis_depth</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ZtorMax</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span>
                     <span class="n">dz</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="n">Ztor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>        <span class="c1"># should be min_seis_depth ???</span>
@@ -684,8 +689,8 @@
                                     <span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
                                 <span class="n">r3</span> <span class="o">=</span> <span class="n">Rx</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">+</span> <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
                                 <span class="n">Rrupp</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Rx</span><span class="p">[</span><span class="n">r3</span><span class="p">]</span> <span class="o">-</span>
-                                    <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">+</span>
-                                    <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                                                     <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Ztor</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">+</span>
+                                                                                    <span class="n">width</span><span class="p">[</span><span class="n">w</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dip</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
                             <span class="n">Rrup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Rrupp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ry</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
                             <span class="n">Rrup2</span> <span class="o">=</span> <span class="n">Rrup</span> <span class="o">*</span> <span class="n">Rrup</span>
@@ -749,7 +754,7 @@
 <span class="sd">        Repi (float): Epicentral distance (km).</span>
 <span class="sd">        theta (float): Source-to-site angle (radians).</span>
 <span class="sd">        ntheta (int): Number of integration steps for theta; used if `bytheta`</span>
-<span class="sd">            is True.</span>
+<span class="sd">            is False.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: Rrup variance, Rrup mean, Rjb variance, Rjb mean</span>
@@ -951,6 +956,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>

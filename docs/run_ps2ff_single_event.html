@@ -4,23 +4,16 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>run_ps2ff_single_event &#8212; ps2ff 1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="shortcut icon" href="_static/ps2ff.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,8 +24,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   <div class="document">
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -80,18 +72,30 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="run-ps2ff-single-event">
@@ -101,7 +105,7 @@ ratios and variances for a single event. This means that the magnitdue and
 hypocentral depth are available, simplifying the integration. It optionally
 tabulates the adjustment factors as a function of backazimuth. An example
 configuration file for this program is given in
-<code class="docutils literal"><span class="pre">tests/config/test_single.ini</span></code> <a class="reference external" href="https://github.com/usgs/ps2ff/blob/master/tests/config/test_single.ini">here</a>.</p>
+<code class="docutils literal notranslate"><span class="pre">tests/config/test_single.ini</span></code> <a class="reference external" href="https://github.com/usgs/ps2ff/blob/master/tests/config/test_single.ini">here</a>.</p>
 <p>The configuration parameters are:</p>
 <ul>
 <li><p class="first"><strong>M</strong> – The earthquake magnitude.</p>
@@ -113,7 +117,7 @@ configuration file for this program is given in
 <li><p class="first"><strong>NP</strong> – The number of processors (cores) to use. Minimum 1.</p>
 </li>
 <li><p class="first"><strong>datadir</strong> — The directory into which the output files are written. If
-unspecified, it uses <code class="docutils literal"><span class="pre">./data</span></code>.</p>
+unspecified, it uses <code class="docutils literal notranslate"><span class="pre">./data</span></code>.</p>
 </li>
 <li><dl class="first docutils">
 <dt><strong>rup_dim_model</strong> – String to select the magnitude scaling relationship.</dt>
@@ -138,7 +142,7 @@ interface and intraslab subduction-zone earthquakes with moment magnitude,
 <li>Sea10_slab: Slab coefficients from the paper in previous bullet.</li>
 </ul>
 </li>
-<li><p class="first"><em>mech</em> – The rupture mechanism, only used by some scaling relationships:</p>
+<li><p class="first"><strong>mech</strong> – The rupture mechanism, only used by some scaling relationships:</p>
 <ul class="simple">
 <li>A – all/unknown mechanisms,</li>
 <li>SS – strike-slip,</li>
@@ -187,7 +191,7 @@ but take longer to run.</p>
 </li>
 </ul>
 </p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">run_ps2ff_single_event</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">config_file</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">run_ps2ff_single_event</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">config_file</span>
 </pre></div>
 </div>
 <div class="section" id="Positional Arguments">
@@ -218,6 +222,7 @@ but take longer to run.</p>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>

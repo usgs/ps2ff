@@ -15,4 +15,5 @@ Submodules
    ps2ff.integration_loops
    ps2ff.interpolate
    ps2ff.magnitude_scaling
+   ps2ff.run
 
