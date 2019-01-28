@@ -1,5 +1,5 @@
-ps2ff\.config
-====================
+ps2ff.config
+===================
 
 .. automodule:: ps2ff.config
     :members:

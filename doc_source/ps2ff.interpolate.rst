@@ -1,5 +1,5 @@
-ps2ff\.interpolate
-=========================
+ps2ff.interpolate
+========================
 
 .. automodule:: ps2ff.interpolate
     :members:

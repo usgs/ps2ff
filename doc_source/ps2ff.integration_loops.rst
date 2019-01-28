@@ -1,5 +1,5 @@
-ps2ff\.integration\_loops
-================================
+ps2ff.integration\_loops
+===============================
 
 .. automodule:: ps2ff.integration_loops
     :members:

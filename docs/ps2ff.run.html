@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ps2ff.run &#8212; ps2ff 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="shortcut icon" href="_static/ps2ff.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ps2ff Programs" href="programs.html" />
+    <link rel="prev" title="ps2ff.magnitude_scaling" href="ps2ff.magnitude_scaling.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/ps2ff_wide.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">ps2ff</h1>
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ps2ff.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.config.html">ps2ff.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.constants.html">ps2ff.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.integration_loops.html">ps2ff.integration_loops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.interpolate.html">ps2ff.interpolate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ps2ff.magnitude_scaling.html">ps2ff.magnitude_scaling</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ps2ff.run</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="programs.html">Command Line Interface</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="ps2ff.html">ps2ff</a><ul>
+      <li>Previous: <a href="ps2ff.magnitude_scaling.html" title="previous chapter">ps2ff.magnitude_scaling</a></li>
+      <li>Next: <a href="programs.html" title="next chapter">ps2ff Programs</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-ps2ff.run">
+<span id="ps2ff-run"></span><h1>ps2ff.run<a class="headerlink" href="#module-ps2ff.run" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ps2ff.run.single_event_adjustment">
+<code class="descclassname">ps2ff.run.</code><code class="descname">single_event_adjustment</code><span class="sig-paren">(</span><em>magnitude</em>, <em>hyp_depth</em>, <em>ar=1.7</em>, <em>mechanism=&lt;Mechanism.A: 'A'&gt;</em>, <em>mag_scaling=&lt;MagScaling.WC94: 'WC94'&gt;</em>, <em>n_repi=13</em>, <em>min_repi=0.1</em>, <em>max_repi=1000</em>, <em>nxny=3</em>, <em>n_theta=9</em>, <em>n_dip=3</em>, <em>min_dip=0</em>, <em>max_dip=1.5707963267948966</em>, <em>n_eps=3</em>, <em>trunc=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps2ff/run.html#single_event_adjustment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ps2ff.run.single_event_adjustment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for getting event-specific point source distance
+adjustment factors. This does not integrate across magnitude
+or depth and so those values must be provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>magnitude</strong> (<em>float</em>) – Earthquake magnitude.</li>
+<li><strong>hyp_depth</strong> (<em>float</em>) – Hypocentral depth (km).</li>
+<li><strong>ar</strong> (<em>float</em>) – Aspect ratio (L/W).</li>
+<li><strong>mechanism</strong> (<a class="reference internal" href="ps2ff.constants.html#ps2ff.constants.Mechanism" title="ps2ff.constants.Mechanism"><em>Mechanism</em></a>) – A ps2ff.constants Mechanism instance.</li>
+<li><strong>mag_scaling</strong> (<a class="reference internal" href="ps2ff.constants.html#ps2ff.constants.MagScaling" title="ps2ff.constants.MagScaling"><em>MagScaling</em></a>) – A ps2ff.constants MagScaling instance.</li>
+<li><strong>n_repi</strong> (<em>int</em>) – Number of log-spaced Repi points to compute conversions.</li>
+<li><strong>min_repi</strong> (<em>float</em>) – Minimum Repi to compute conversions (km).</li>
+<li><strong>max_repi</strong> (<em>float</em>) – Maximum Repi to compute conversions (km).</li>
+<li><strong>nxny</strong> (<em>int</em>) – Number of integration steps in the x/y direction for floating,
+the rupture plane around the hypocenter.</li>
+<li><strong>n_theta</strong> (<em>int</em>) – Number of integration steps for theta. Default value of 9 is
+an angular step size of 45 deg since it goes from 0 to 360 deg.</li>
+<li><strong>n_dip</strong> (<em>int</em>) – Number of integration steps for dip. Default value of 3 gives
+a step size of 45 deg for the default range of 0 to 90 deg.</li>
+<li><strong>min_dip</strong> (<em>float</em>) – Minimum dip for integration (rad).</li>
+<li><strong>max_dip</strong> (<em>float</em>) – Maximum dip for integration (rad).</li>
+<li><strong>n_eps</strong> (<em>int</em>) – Number of integration steps for mag-area relationship.</li>
+<li><strong>trunc</strong> (<em>float</em>) – Truncation level for normal distribution of log area conditioned
+on magnitude.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Retunrs:</dt>
+<dd><p class="first">tuple: All arrays of length n_repi:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>Repi (km).</li>
+<li>Average Rjb conditioned on Repi, M, and Zhyp.</li>
+<li>Average Rrup conditioned on Repi, M, and Zhyp.</li>
+<li>Variance of Rjb conditioned on Repi, M, and Zhyp.</li>
+<li>Variance of Rrup conditioned on Repi, M, and Zhyp.</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

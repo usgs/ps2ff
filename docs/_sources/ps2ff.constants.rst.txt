@@ -1,5 +1,5 @@
-ps2ff\.constants
-=======================
+ps2ff.constants
+======================
 
 .. automodule:: ps2ff.constants
     :members:
