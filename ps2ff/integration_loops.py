@@ -721,8 +721,7 @@ def single_event_inner_loop(conf, Repi, theta=0, ntheta=73):
                 # Overwrite W if it extends too far and recompute SW, x, dx
                 Ztor = np.max(np.array([conf['zhyp'] - ZW,
                                         conf['min_seis_depth']]))
-                Zbor = np.min(np.array([conf['zhyp'] + ZW,
-                                        conf['max_seis_depth']]))
+                Zbor = conf['zhyp'] + ZW
                 W = (Zbor - Ztor)/np.sin(dip[k])
             else:
                 Ztor = conf['zhyp']
