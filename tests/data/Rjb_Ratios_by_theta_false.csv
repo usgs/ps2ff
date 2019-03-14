@@ -1,18 +1,18 @@
-# Program: /Users/emthompson/miniconda3/envs/ps2ff/bin/run_ps2ff_single_event
+# Program: bin/run_ps2ff_single_event
 # Config file: tests/config/test_single_by_theta_false.ini
-# Process start: 2017-09-11T09:18:31.716440
-# Process finish: 2017-09-11T09:18:32.616850
-# M = 7.000000, zhyp = 5.000000, bytheta = False, rup_dim_model = WC94, mech = A, AR = 1.7, ndip = 5, mindip = 0.000000, maxdip = 1.570796
+# Process start: 2019-03-14T11:41:39.515885
+# Process finish: 2019-03-14T11:41:40.742361
+# M = 7.000000, zhyp = 5.000000, bytheta = False, rup_dim_model = MagScaling.WC94, mech = Mechanism.A, AR = 1.7, ndip = 5, mindip = 0.000000, maxdip = 1.570796
 # ntheta = 10, nxny = 10, neps = 2, trunc = 0.500000, min_seis_depth = 0.000000, max_seis_depth = 20.000000
 "Repi_km","R7"
 0.100000,0.143491
 0.251189,0.143491
 0.630957,0.143491
-1.584893,0.148019
-3.981072,0.178772
-10.000000,0.299487
-25.118864,0.530231
-63.095734,0.777510
-158.489319,0.906585
-398.107171,0.962127
-1000.000000,0.984824
+1.584893,0.143508
+3.981072,0.172867
+10.000000,0.287959
+25.118864,0.546464
+63.095734,0.796375
+158.489319,0.915842
+398.107171,0.966023
+1000.000000,0.986405
