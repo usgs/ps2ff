@@ -1,7 +1,7 @@
 
 import pandas as pd
 import shutil
-from impactutils.io.cmd import get_command_output
+from ps2ff.cmd import get_command_output
 
 
 def test_rrup_Sea10_slab():

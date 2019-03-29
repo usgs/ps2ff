@@ -3,7 +3,6 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- impactutils
 - numpy
 - pandas
 - scipy
