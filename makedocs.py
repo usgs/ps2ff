@@ -7,11 +7,9 @@ into the docs directory.
 import argparse
 import os.path
 import sys
-import tempfile
 import pathlib
-from distutils.dir_util import copy_tree
 
-from impactutils.io.cmd import get_command_output
+from ps2ff.cmd import get_command_output
 
 
 def main(args):
@@ -25,26 +23,24 @@ def main(args):
         Nothing. Function will exit upon success or failure.
 
     """
-    verbose = args.verbose
-
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     # Some useful directories
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     REPO_DIR = os.path.dirname(os.path.abspath(__file__))
     DOCS_DIR = os.path.join(REPO_DIR, 'docs')
-    API_DIR =  os.path.join(REPO_DIR, 'doc_source')
+    API_DIR = os.path.join(REPO_DIR, 'doc_source')
     PACKAGE_DIR = os.path.join(REPO_DIR, 'ps2ff')
 
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     # what is the package called and who are the authors
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     PACKAGE = "ps2ff"
     AUTHORS = 'Eric Thompson, Bruce Worden'
     verstr = '1.1'
 
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     # run the api doc command; this creates the .rst files
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     sys.stderr.write('Building ps2ff API documentation (REST)...\n')
     sphinx_cmd = 'sphinx-apidoc -o %s -f -e -l -M -d 12 -H %s -A "%s"'\
                  ' -V %s %s' % (API_DIR, PACKAGE, AUTHORS, verstr,
@@ -59,9 +55,9 @@ def main(args):
         print(stdout.decode('utf-8'))
         print(stderr.decode('utf-8'))
 
-    #--------------------------------------------
+    # --------------------------------------------
     # try to clean up some of the excess labeling
-    #--------------------------------------------
+    # --------------------------------------------
     clean_cmd = "sed -i '' -e 's/ module//g' `find %s/*.rst -type f "\
                 "-maxdepth 0 -print`" % API_DIR
     res, stdout, stderr = get_command_output(clean_cmd)
@@ -75,11 +71,12 @@ def main(args):
                 "-maxdepth 0 -print`" % API_DIR
     res, stdout, stderr = get_command_output(clean_cmd)
 
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     # Build the html
-    #-------------------------------------------------------------
+    # -------------------------------------------------------------
     sys.stderr.write('Building ps2ff pages (HTML)...\n')
-    res, stdout, stderr = get_command_output('sphinx-build -a -E doc_source docs')
+    res, stdout, stderr = get_command_output(
+        'sphinx-build -a -E doc_source docs')
     if not res:
         raise Exception('Could not build HTML for API documentation. - '
                         'error "%s"' % stderr.decode())

@@ -1,7 +1,7 @@
 
 import pandas as pd
 import shutil
-from impactutils.io.cmd import get_command_output
+from ps2ff.cmd import get_command_output
 
 
 def test_single():
@@ -120,8 +120,8 @@ def test_single_N1():
     # Clean up
     shutil.rmtree('DataSingle')
 
+
 if __name__ == '__main__':
     test_single()
     test_single_by_theta_false()
     test_single_N1()
-    
