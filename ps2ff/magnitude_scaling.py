@@ -51,28 +51,28 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc,
             sig_width = 0.14
             width = 10**(-0.76 + 0.27 * M + sig_width * epsmid)
             sig_area = 0.22
-            area = 10**(-3.42 + 0.90*M + sig_area * epsmid)
+            area = 10**(-3.42 + 0.90 * M + sig_area * epsmid)
         elif mech is Mechanism.R:
             sig_length = 0.16
             length = 10**(-2.42 + 0.58 * M + sig_length * epsmid)
             sig_width = 0.15
             width = 10**(-1.61 + 0.41 * M + sig_width * epsmid)
             sig_area = 0.26
-            area = 10**(-3.99 + 0.98*M + sig_area * epsmid)
+            area = 10**(-3.99 + 0.98 * M + sig_area * epsmid)
         elif mech is Mechanism.N:
             sig_length = 0.17
-            length = 10**(-1.88 + 0.50 * M) + sig_length * epsmid
+            length = 10**(-1.88 + 0.50 * M + sig_length * epsmid)
             sig_width = 0.12
             width = 10**(-1.14 + 0.35 * M + sig_width * epsmid)
             sig_area = 0.22
-            area = 10**(-2.78 + 0.82*M + sig_area * epsmid)
+            area = 10**(-2.78 + 0.82 * M + sig_area * epsmid)
         elif mech is Mechanism.A:
             sig_length = 0.16
             length = 10**(-2.44 + 0.59 * M + sig_length * epsmid)
             sig_width = 0.15
             width = 10**(-1.01 + 0.32 * M + sig_width * epsmid)
             sig_area = 0.24
-            area = 10**(-3.49 + 0.91*M + sig_area * epsmid)
+            area = 10**(-3.49 + 0.91 * M + sig_area * epsmid)
         else:
             raise TypeError('Unsupported value of \'mech\'')
     elif rup_dim_model is MagScaling.S14:
@@ -114,7 +114,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc,
         #     0.212*3/4 = 0.159 (seems a bit low...)
         if M > 6.71:
             sig_area = 0.236
-            area = 10**(3/4*(M - 3.07) + sig_area * epsmid)
+            area = 10**(3 / 4 * (M - 3.07) + sig_area * epsmid)
         else:
             sig_area = 0.159
             area = 10**((M - 3.98) + sig_area * epsmid)
@@ -129,7 +129,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc,
         sig_width = 0.173
         width = 10**(-0.882 + 0.351 * M + sig_width * epsmid)
         sig_area = 0.304
-        area = 10**(-3.49 + 0.952*M + sig_area * epsmid)
+        area = 10**(-3.49 + 0.952 * M + sig_area * epsmid)
     elif rup_dim_model == MagScaling.Sea10_slab:
         # Strasser et al. (2010), coefficients for slab events
         sig_length = 0.146
@@ -137,7 +137,7 @@ def dimensions_from_magnitude(M, rup_dim_model, neps, trunc,
         sig_width = 0.067
         width = 10**(-1.058 + 0.356 * M + sig_width * epsmid)
         sig_area = 0.184
-        area = 10**(-3.225 + 0.89*M + sig_area * epsmid)
+        area = 10**(-3.225 + 0.89 * M + sig_area * epsmid)
     else:
         raise TypeError('Unsupported value of \'rup_dim_model\'')
     return length, sig_length, width, sig_width, area, sig_area
@@ -157,8 +157,8 @@ def compute_epsilon(neps, trunc):
         tuple: epsilon midpoints, their probabilities, bin width.
     """
     # Need to assume a truncation level for normal distribution
-    eps = np.linspace(-trunc, trunc, neps+1)
-    epsmid = 0.5*(eps[1:] + eps[:-1])
+    eps = np.linspace(-trunc, trunc, neps + 1)
+    epsmid = 0.5 * (eps[1:] + eps[:-1])
     peps = (norm.cdf(eps[1:]) - norm.cdf(eps[:-1]))
 
     # define delta epsilons to normalize probabilities
